@@ -1,18 +1,18 @@
 import mongoose from "mongoose";
 
-const userProfileSchema = new mongoose.Schema({
+const doctorProfileSchema = new mongoose.Schema({
     userID:{
         type:String,
         unique:true,
-        required:true
+        
     },
     title:{
         type:String,
-        required:true
+        
     },
     phone:{
         type:Number,
-        required:true,
+        
         unique:true
     },
     licenceNumber:{
@@ -24,11 +24,11 @@ const userProfileSchema = new mongoose.Schema({
     ID:{
         type:Number,
         unique:true,
-        required:true
+        
     },
     image:{
         type:Array,
-        required:true
+        
     },
     status:{
         type:String,
@@ -37,27 +37,27 @@ const userProfileSchema = new mongoose.Schema({
     },
     DOB:{
         type:Number,
-        required:true,
+        
     },
     Bio:{
         typre:String,
-        required:true
+        
     },
     specialty:{
         type:String,
-        required:true,
+        
     },
     qualifications:{
         type:String,
-        required:true,
+        
     },
     experience:{
         type:Number,
-        required:true
+        
     },
     clinicAddress:{
         type:Array,
-        required:true
+        
     },
 
 })
