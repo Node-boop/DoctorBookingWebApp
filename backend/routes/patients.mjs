@@ -1,4 +1,4 @@
-import { request, response, Router } from "express";
+import { json, request, response, Router } from "express";
 import {body,checkSchema,validationResult,matchedData} from 'express-validator'
 import { registerValidator } from "../validators/validator.mjs";
 import { loginValidator } from "../validators/validator.mjs";
@@ -175,5 +175,34 @@ router.post('/api/user/patient-profile',userMiddleware,checkSchema(patientProfil
 
 })
 
+
+// Password verify patient account
+
+
+const generateOtp = ()=>{
+    const min = 1000000
+    const max = 999999
+
+    const otp = Math.floor(Math.random() * (max-min) + min)
+
+    return otp
+}
+
+// sending email to the user
+
+const sendVerificationEmail = ()=>{
+    
+}
+router.post('/api/user/account-verify',userMiddleware,async(request,response)=>{
+    const userId = request.user.payload.id
+    const user = User.findById(userId)
+
+    if(!user)
+    {
+        return response.status(401),json({succes:false,error:"User not found or unauthenticated"})
+    }
+
+
+})
 
 export default router

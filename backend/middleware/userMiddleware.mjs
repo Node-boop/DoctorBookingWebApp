@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 const userMiddleware  = async(request,response,next)=>{
     const authorizationHeader = request.headers.authorization
-    console.log(request.headers)
+   
     if(!authorizationHeader)
     {
         return response.status(400).json({succes:false,errorMessage:"Authorization Header required"})
