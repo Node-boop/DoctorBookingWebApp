@@ -134,6 +134,10 @@ router.post('/api/user/doctor-profile',doctorMiddleware,checkSchema(doctorProfil
 
     const {title,speciality,DOB,ID,experience,qualifications,licenceNumber,Bio,clinicAddress,phone} = request.body
     const userId = request.user.payload.id
+    if(request.user.payload.role !== 'doctor' || request.user.payload.role !== 'admin')
+    {
+        throw new Error("Action forbidden no permisions to write on this resource")
+    }
     const result = validationResult(request)
     if(!result.isEmpty())
     {

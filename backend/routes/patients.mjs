@@ -25,7 +25,7 @@ export const generateJwtToken = (payload)=>{
 // creating a new user 
 router.post('/api/user/register',body(),checkSchema(registerValidator),async(request,response)=>{
     try {
-        const {name,email,phone,password,password2} = request.body // access your values from the request body
+        const {name,email,password,password2} = request.body // access your values from the request body
 
         const result = validationResult(request) // use validator to catch any validation errors from your schema
 
@@ -55,7 +55,7 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
         const newUser = new User({
             name:data.name,
             email:data.email,
-            phone:`254${data.phone}`,
+           
             role:'patient',
             password:data.password
         })
@@ -163,6 +163,7 @@ router.post('/api/user/patient-profile',userMiddleware,checkSchema(patientProfil
         title,
         SHA,
         ID,
+        phone,
         DOB:dateOfBirth,
         avator:imageUrl
 

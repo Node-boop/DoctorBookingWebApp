@@ -22,21 +22,7 @@ export const registerValidator = {
             errorMessage:"Password not viable please create a more stronger passsword"
         }
     },
-    phone:{
-        isLength:{
-            options:{
-                min:10,
-                max:12
-            },
-            errorMessage:"Invalid phone number must be atleat 10 digits"
-        },
-        isNumeric:{
-            errorMessage:"Invalid type,phone number caanot be a string"
-        },
-        isMobilePhone:{
-            errorMessage:"Invalid format enter a valid Phone Number"
-        }
-    }
+    
 }
 
 export const loginValidator = {
