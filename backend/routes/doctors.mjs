@@ -1,10 +1,14 @@
-import { response, Router } from "express";
+import { request, response, Router } from "express";
 import {body,checkSchema,validationResult,matchedData} from 'express-validator'
 import { registerValidator } from "../validators/validator.mjs";
-import { loginValidator } from "../validators/validator.mjs";
+import { loginValidator ,doctorProfileValidator} from "../validators/validator.mjs";
 import User from "../models/users.mjs";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import doctorMiddleware from "../middleware/doctorMiddleware.mjs";
+import {v2 as cloudinary} from 'cloudinary'
+import doctorProfile from "../models/doctorProfile.mjs";
+import upload from "../middleware/multer.mjs";
 const router = Router()
 
 
@@ -124,6 +128,56 @@ router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)
 
 /*************************END OF AUTHENTICATION ROUTES **************/
 
+// profile creation setup
+
+router.post('/api/user/doctor-profile',doctorMiddleware,checkSchema(doctorProfileValidator),upload.fields([{name:'image1',maxCount:1},{name:'image2',maxCount:1},{name:'image3',maxCount:1},{name:'imag4',maxCount:1}]),async(request,response)=>{
+
+    const {title,speciality,DOB,ID,experience,qualifications,licenceNumber,Bio,clinicAddress,phone} = request.body
+    const userId = request.user.payload.id
+    const result = validationResult(request)
+    if(!result.isEmpty())
+    {
+        throw new Error('error' + result.array())
+    }
+    const data = matchedData(request)
+    console.log(data)
+    
+    const user = await User.findById(userId)
+
+    if(!user)
+        throw new Error('User not found')
+
+
+    const image1 = request.files.image1 && request.files.image1[0]
+    const image2 = request.files.image2 && request.files.image2[0]
+    const image3 = request.files.image3 && request.files.image3[0]
+    const image4 = request.files.image4 && request.files.image4[0]
+
+    const images = [image1,image2,image3,image4].filter((item)=> item !== undefined)
+
+    const imageUrl = await Promise.all(
+        images.map(async(item)=>{
+            let result = await cloudinary.uploader.upload(item.path,{resource_type:'image'})
+            return result.secure_url
+        })
+    )
+
+    const newProfile = new doctorProfile({
+        userId,
+        title,
+        image:imageUrl,
+        speciality,
+        Bio,
+        experience,
+        qualifications,
+        licenceNumber,
+        phone,
+        ID,
+        DOB,
+
+    })
+    
+})
 
 
 export default router

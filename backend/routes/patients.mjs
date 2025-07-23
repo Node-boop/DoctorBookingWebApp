@@ -129,7 +129,7 @@ router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)
 
 /***Profile setting routes  */
 
-router.post('/api/user/create-profile',userMiddleware,checkSchema(patientProfileValidator),upload.fields([{name:'avator',maxCount:1}]),async(request,response)=>{
+router.post('/api/user/patient-profile',userMiddleware,checkSchema(patientProfileValidator),upload.fields([{name:'avator',maxCount:1}]),async(request,response)=>{
 
     const {title,SHA,ID,DOB,phone} = request.body
     const userId = request.user.payload.id

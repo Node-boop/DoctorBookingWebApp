@@ -96,3 +96,95 @@ export const patientProfileValidator = {
         }
     }
 }
+
+export const doctorProfileValidator = {
+    title:{
+        isString:{
+            errorMessage:"Title must be of string value"
+        },
+        isLength:{
+            options:{
+                min:2,
+                max:4
+            },
+            errorMessage:"title cannot me more than 4 characters or less than 2"
+           
+        }
+
+    },
+    phone:{
+        isLength:{
+            options:{
+                min:10,
+                max:12
+            },
+            errorMessage:"Invalid phone number must be atleat 10 digits"
+        },
+        isNumeric:{
+            errorMessage:"Invalid type,phone number caanot be a string"
+        },
+        isMobilePhone:{
+            errorMessage:"Invalid format enter a valid Phone Number"
+        }
+    },
+    ID:{
+        isNumeric:{
+            errorMessage:"ID number must be a valid positive number or integer"
+        },
+        isLength:{
+            options:{
+                min:7,
+                max:8
+            },
+            errorMessage:"ID number cannot less than 7 digits or more than 8 digits"
+
+        }
+    },
+    licenceNumber:{
+        isString:{
+            errorMessage:"Invalid data type licence number must be a valid string"
+        },
+        isLength:{
+            options:{
+                min:10,
+                max:32
+            },
+            errorMessage:"Invalid license number length"
+        }
+    },
+    speciality:{
+        isString:{
+            errorMessage:"Invalid data type,this field must be a string"
+        }
+    },
+    qualifications:{
+        isString:{
+            errorMessage:"Invalid data type,this field must be a string"
+        },
+        isLength:{
+            options:{
+                min:20,
+                max:30,
+            },
+            errorMessage:"Below minimum required characters on the field must be atleast 20 and 30 "
+        }
+    },
+    experience:{
+        isNumeric:{
+            errorMessage:"Invalid data type experience must be a valid data type of integer"
+        }
+    },
+    Bio:{
+        isString:{
+            errorMessage:"Invalid data type bio must be a valid data type of string"
+
+        },
+        isLength:{
+            options:{
+                min:50,
+                max:200
+            },
+            errorMessage:"Words must be atleat 50 to 200 characters"
+        }
+    }
+}
