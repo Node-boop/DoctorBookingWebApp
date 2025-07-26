@@ -24,33 +24,38 @@ export const generateJwtToken = (payload)=>{
 
 }
 // creating a new user 
-
 /**
  * @swagger
- * /api/user/register
- * post:
- * summary:Add new user
- * tags:[Authentication]
- * requestBody:
- * required:true
- * content:
- * application/json:
- * schema:
- * $ref: '#/components/schemas/UserRqgisterRequest'
- * responses:
- * 201:
- * description: User registered succesfully
- * content:
- * application/json:
- * schema:
- * $ref:  '# /components/schemas/AuthResponse'
- * 400:
- * description: invalid input or user already exists
- * content:
- * application/json:
- * schema:
- * $ref : '# /components/schemas/ErrorResponse'
+ * /api/user/register:
+ *   post:
+ *     summary: Add new user
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content: 
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserRegisterRequest'
+ * 
+ * 
+ *     responses:
+ *       201:
+ *         description: User created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthResponse'
+ *      
+ *       400:
+ *         description: Invalid input or user already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'         
+ *       
+ *       
  */
+
 router.post('/api/user/register',body(),checkSchema(registerValidator),async(request,response)=>{
     try {
         const {name,email,password,password2} = request.body // access your values from the request body
@@ -107,6 +112,34 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
 
 // logging in users and generating authorization JWT token for each user
 
+/**
+ * @swagger
+ * /api/user/auth:
+ *   post:
+ *     summary: Login User
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserLoginRequest'
+ *     
+ *     responses:
+ *       200:
+ *         description: Login Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthResponse'
+ *       400:
+ *         description: User not Found or Invalid credentials
+ *         content:
+ *           application/json:
+ *             schemas:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *     
+ */
 router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)=>{
     try {
         const result = validationResult(request) // catching all validation error from express-validator

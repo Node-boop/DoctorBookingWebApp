@@ -21,6 +21,7 @@ app.use(routes)
 
 
 app.use('/api/docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
+console.log(JSON.stringify(swaggerSpec, null, 2)); 
 
 console.log(swaggerSpec)
 app.listen(process.env.PORT,()=>{
