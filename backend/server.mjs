@@ -7,6 +7,9 @@ import routes from './routes/index.mjs'
 import passport from 'passport'
 import session from 'express-session'
 import connectV2 from './config/cloudinary.mjs'
+import swaggerJsdoc from 'swagger-jsdoc'
+import swaggerSpec from './utils/swagger.mjs'
+import swaggerUi from 'swagger-ui-express'
 const app = express()
 
 connectMongoDB()
@@ -17,7 +20,9 @@ app.use(express.json())
 app.use(routes)
 
 
+app.use('/api/docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
 
+console.log(swaggerSpec)
 app.listen(process.env.PORT,()=>{
     console.log(`[+] Server running on port : ${process.env.PORT}`)
 })

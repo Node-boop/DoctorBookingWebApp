@@ -9,12 +9,15 @@ import doctorMiddleware from "../middleware/doctorMiddleware.mjs";
 import {v2 as cloudinary} from 'cloudinary'
 import doctorProfile from "../models/doctorProfile.mjs";
 import upload from "../middleware/multer.mjs";
+import nodemailer from 'nodemailer'
+import userMiddleware from "../middleware/userMiddleware.mjs";
+import doctorSchedule from "../models/doctor-schedules.mjs";
 const router = Router()
 
 
 export const generateJwtToken = (payload)=>{
 
-    const token = jwt.sign({payload},process.env.JWT_SECRET_KEY)
+    const token = jwt.sign({payload},process.env.JWT_SECRET_KEY,{expiresIn:'1h'})
 
     return token
 
@@ -22,9 +25,9 @@ export const generateJwtToken = (payload)=>{
 /**************START OF AUTHENTICATION ROUTES**************/
 
 // creating a new user 
-router.post('/api/user/register',body(),checkSchema(registerValidator),async(request,response)=>{
+router.post('/api/user/doctor/register',body(),checkSchema(registerValidator),async(request,response)=>{
     try {
-        const {name,email,phone,password,password2} = request.body // access your values from the request body
+        const {name,email,password,password2} = request.body // access your values from the request body
 
         const result = validationResult(request) // use validator to catch any validation errors from your schema
 
@@ -55,16 +58,17 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
             name:data.name,
             email:data.email,
             phone:`${data.phone}`,
-            role:'patient',
+            role:'doctor',
             password:data.password
         })
+        newUser.status = 'Pending'
         await newUser.save()
         /**************** a model to return filtered data about a user***************** */
         const responseModel = {
             id:newUser._id,
             name:newUser.name,
             email:newUser.email,
-            phone:newUser.phone,
+           
             role:newUser.role
         }
         response.status(201).json({succes:true,user:responseModel})
@@ -78,7 +82,7 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
 
 // logging in users and generating authorization JWT token for each user
 
-router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)=>{
+router.post('/api/user/doctor/auth',checkSchema(loginValidator),async(request,response)=>{
     try {
         const result = validationResult(request) // catching all validation error from express-validator
 
@@ -98,6 +102,9 @@ router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)
         {
             return response.status(404).json({succes:false,message:"User not found"})
         }
+        if(user.role !== 'doctor')
+            return response.status(403).json({succes:false,message:"Only doctors can log in from this endpoint"})
+        
 
         // COMPARING PASSWORDS ENTERED AND THE USER PASSWORD IN OUR DATABASE
         const passswordMatch = bcrypt.compare(password,user.password)
@@ -130,7 +137,7 @@ router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)
 
 // profile creation setup
 
-router.post('/api/user/doctor-profile',doctorMiddleware,checkSchema(doctorProfileValidator),upload.fields([{name:'image1',maxCount:1},{name:'image2',maxCount:1},{name:'image3',maxCount:1},{name:'imag4',maxCount:1}]),async(request,response)=>{
+router.post('/api/user/doctor/profile',doctorMiddleware,checkSchema(doctorProfileValidator),upload.fields([{name:'image1',maxCount:1},{name:'image2',maxCount:1},{name:'image3',maxCount:1},{name:'imag4',maxCount:1}]),async(request,response)=>{
 
     const {title,speciality,DOB,ID,experience,qualifications,licenceNumber,Bio,clinicAddress,phone} = request.body
     const userId = request.user.payload.id
@@ -183,5 +190,92 @@ router.post('/api/user/doctor-profile',doctorMiddleware,checkSchema(doctorProfil
     
 })
 
+
+router.post('/api/user/doctor/verify',userMiddleware,async(request,response)=>{
+   try {
+    const userId = request.user.payload.id
+    const user = User.findById(userId)
+
+    if(!user)
+    {
+        return response.status(401),json({succes:false,error:"User not found or unauthenticated"})
+    }
+    // generating OTP from the function above
+    const otp  = generateOtp()
+
+    const adminEmail = ''; // your personnalised email from your provider to send emails
+    const adminPass = '' // you given password to connect to external apps
+
+    // creating a transporter agent to send email
+    const transpoter = nodemailer.createTransport({
+        host:'smtp.google.email',
+        port:'465',
+        secure:true,
+        auth:{
+            user:adminEmail,
+            pass:adminPass
+        }
+    })
+
+    let subject = 'Account verification request'
+    const html = `<p>Hello Welcome to Meddicure,you are receiving this email </b>because you or somebody else requested a verification code to 
+    verify your account if this was not you please ignore this email</b> <strong> Your verification code is:</b><h1>${otp}</h1></strong></p>`
+        
+    const verficationMail = transpoter.sendMail({
+        to:user.email,
+        from:adminEmail,
+        subject:subject,
+        html:html
+    })
+
+    response.status(200).json({succes:true,message:'a verification has been sent to your email'})
+   } catch (error) {
+    response.json({succes:false,message:error.message})
+
+   }
+
+
+})
+// doctor route to create slots for booking
+
+router.post('/api/user/doctor/add-slot',
+    [body("slots")
+        .isArray()
+        .withMessage("Slot field must be of type array"),
+        
+    
+    body('duration')
+    .isNumeric()
+    .withMessage("Duration must be a valid integer type")
+    ]
+    ,doctorMiddleware,async(request,response)=>{
+    try {
+        
+        const result = validationResult(request)
+
+        if(!result.isEmpty())
+            return response.json({succes:false,error:result.array()})
+        const doctorID = request.user.payload.id
+        const doctor = await User.findById(doctorID)
+        const {slots,duration} = request.body
+        if(!doctor)
+            return response.status(404).json({succes:false,message:'User not found'})
+
+        if(doctor.role !== 'doctor')
+            return response.status(403).json({succes:false,message:'No permissions to access this resource'})
+
+        const newSchedule = new doctorSchedule({
+            doctorID,
+            availableSlots:slots,
+            slotDuration:duration
+        })
+        await newSchedule.save()
+
+        return response.status(201).json({succes:true,schedule:newSchedule})
+        
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 export default router

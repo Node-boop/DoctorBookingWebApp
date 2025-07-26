@@ -30,11 +30,6 @@ const doctorProfileSchema = new mongoose.Schema({
         type:Array,
         
     },
-    status:{
-        type:String,
-        enum:['Pending','Approved','Inactive','Suspended','Banned'],
-        default:'Pending'
-    },
     DOB:{
         type:Number,
         

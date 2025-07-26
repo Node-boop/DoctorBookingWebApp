@@ -32,6 +32,11 @@ const userSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    status:{
+        type:String,
+        enum:['Pending','Approved','Inactive','Suspended','Banned'],
+        default:'Pending'
+    },
     loginAttempts:{
         type:Number,
         default:0

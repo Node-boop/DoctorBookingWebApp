@@ -10,19 +10,47 @@ import userMiddleware from "../middleware/userMiddleware.mjs";
 import { patientProfileValidator } from "../validators/validator.mjs";
 import {v2 as cloudinary} from 'cloudinary'
 import upload from "../middleware/multer.mjs";
-
-
+import nodemailer from 'nodemailer'
+import doctorSchedule from "../models/doctor-schedules.mjs";
+import booking from '../models/booking.mjs'
 const router = Router()
 
 
 export const generateJwtToken = (payload)=>{
 
-    const token = jwt.sign({payload},process.env.JWT_SECRET_KEY)
+    const token = jwt.sign({payload},process.env.JWT_SECRET_KEY,{expiresIn:'1h'})
 
     return token
 
 }
 // creating a new user 
+
+/**
+ * @swagger
+ * /api/user/register
+ * post:
+ * summary:Add new user
+ * tags:[Authentication]
+ * requestBody:
+ * required:true
+ * content:
+ * application/json:
+ * schema:
+ * $ref: '#/components/schemas/UserRqgisterRequest'
+ * responses:
+ * 201:
+ * description: User registered succesfully
+ * content:
+ * application/json:
+ * schema:
+ * $ref:  '# /components/schemas/AuthResponse'
+ * 400:
+ * description: invalid input or user already exists
+ * content:
+ * application/json:
+ * schema:
+ * $ref : '# /components/schemas/ErrorResponse'
+ */
 router.post('/api/user/register',body(),checkSchema(registerValidator),async(request,response)=>{
     try {
         const {name,email,password,password2} = request.body // access your values from the request body
@@ -59,6 +87,7 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
             role:'patient',
             password:data.password
         })
+        newUser.status = 'Approved'
         await newUser.save()
         /**************** a model to return filtered data about a user***************** */
         const responseModel = {
@@ -190,10 +219,35 @@ const generateOtp = ()=>{
 
 // sending email to the user
 
-const sendVerificationEmail = ()=>{
+const sendVerificationEmail = (to,from)=>{
+
+    try {
+        // creating transporter to connect to smtp server 
+        const otp  = generateOtp()
+        const transpoter = nodemailer.createTransport({
+            host:'smtp.google.email',
+            port:'465',
+            secure:true,
+            auth:{
+                user:'',
+                pass:''
+            }
+        })
+
+        let subject = 'Account verification request'
+        const html = `<p>Hello Welcome to Meddicure,you are receiving this email </b>because you or somebody else requested a verification code to 
+        verify your account if this was not you please ignore this email</b> <strong> Your verification code is:</b><h1>${otp}</h1></strong></p>`
+        
+
+    
+    } catch (error) {
+        
+    }
+
     
 }
 router.post('/api/user/account-verify',userMiddleware,async(request,response)=>{
+   try {
     const userId = request.user.payload.id
     const user = User.findById(userId)
 
@@ -201,8 +255,139 @@ router.post('/api/user/account-verify',userMiddleware,async(request,response)=>{
     {
         return response.status(401),json({succes:false,error:"User not found or unauthenticated"})
     }
+    // generating OTP from the function above
+    const otp  = generateOtp()
+
+    const adminEmail = ''; // your personnalised email from your provider to send emails
+    const adminPass = '' // you given password to connect to external apps
+
+    // creating a transporter agent to send email
+    const transpoter = nodemailer.createTransport({
+        host:'smtp.google.email',
+        port:'465',
+        secure:true,
+        auth:{
+            user:adminEmail,
+            pass:adminPass
+        }
+    })
+
+    let subject = 'Account verification request'
+    const html = `<p>Hello Welcome to Meddicure,you are receiving this email </b>because you or somebody else requested a verification code to 
+    verify your account if this was not you please ignore this email</b> <strong> Your verification code is:</b><h1>${otp}</h1></strong></p>`
+        
+    const verficationMail = transpoter.sendMail({
+        to:user.email,
+        from:adminEmail,
+        subject:subject,
+        html:html
+    })
+
+    response.status(200).json({succes:true,message:'a verification has been sent to your email'})
+   } catch (error) {
+    response.json({succes:false,message:error.message})
+
+   }
 
 
+})
+
+// ROUTES TO ENABLE APPOINTMENTS
+
+
+router.post('/api/user/appointment-booking',[body('userSlot').isObject().withMessage("Field must be a valid object"),
+    body('doctorID').isString().withMessage('Field must be of data type string'),
+    body('reason').isString().withMessage("reason field must be a valid data type of string")
+],userMiddleware,async(request,response)=>{
+    try {
+
+        const {doctorID,userSlot,reason} = request.body
+        const ID = request.query
+        console.log(ID)
+       
+        // exracting results from validator
+        const result = validationResult(request)
+        // checking for validation errors from react validater
+        if(!result.isEmpty())
+            return response.json({succes:false,error:result.array()})
+        const userID = request.user.payload.id
+        
+        const user = await User.findById(userID)
+      
+        
+
+        if(!user)
+        {
+            return response.status(401).json({succes:false,message:"Failed user not found or Unauthenticated"})
+        }
+        
+
+        const schedule = await doctorSchedule.findOne({doctorID})
+
+        if(!schedule)
+            throw new Error('Cannot find schedule for the doctor')
+
+        const availableSlots = schedule.availableSlots
+
+        if(!availableSlots)
+            throw new Error('No Slots availble for selection')
+
+        //looping through all slots
+        console.warn(availableSlots)
+        /*
+        for(const slot in availableSlots)
+        {
+            if(!slot)
+            {
+                throw new Error("No Slot found")
+            }
+            if (slot.time === userSlot.time && slot.date === userSlot.date && slot.isBooked === false)
+            {
+                console.log(slot)
+                 console.log(slot.date)
+                const newBooking = new booking({
+                    patientID:userID,
+                    doctorID,
+                    appointmentDate:slot.date,
+                    appointmentTime:slot.time
+
+                })
+
+                await newBooking.save()
+                slot.isBooked = true
+                await slot.save()
+                return response.status(201).json({succes:true,Booking:newBooking})
+                
+            }else{
+                return response.status(404).json({succes:false,message:"Slot not availble or is booked"})
+            }
+        }*/
+        
+        const slot = availableSlots.find((item)=> item.date === userSlot.date && item.time === userSlot.time )
+        if(!slot)
+            throw new Error("The slot is not available")
+        
+        if(slot.isBooked)
+            throw new Error("Slot Booked kindly consider rescheduling")
+
+        const newBooking = new booking({
+                    patientID:userID,
+                    doctorID,
+                    appointmentDate:slot.date,
+                    appointmentTime:slot.time,
+                    reasonForVisit:reason
+
+                })
+
+        await newBooking.save()
+        slot.isBooked = true
+
+        return response.status(201).json({succes:true,Booking:newBooking})
+    } catch (error) {
+        console.log(error)
+        response.json({succes:false,error:error.message})
+        
+    }
 })
 
 export default router
