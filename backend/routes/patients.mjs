@@ -13,6 +13,8 @@ import upload from "../middleware/multer.mjs";
 import nodemailer from 'nodemailer'
 import doctorSchedule from "../models/doctor-schedules.mjs";
 import booking from '../models/booking.mjs'
+import '../strategies/google-Oath20-strategy.mjs'
+import passport from "passport";
 const router = Router()
 
 
@@ -46,12 +48,18 @@ export const generateJwtToken = (payload)=>{
  *             schema:
  *               $ref: '#/components/schemas/AuthResponse'
  *      
- *       400:
- *         description: Invalid input or user already exists
+ *       409:
+ *         description: Conflict
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'         
+ *               $ref: '#/components/schemas/RegistrationConflictError'
+ *       500:
+ *         description: Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/componets/schemas/ErrorResponse'         
  *       
  *       
  */
@@ -131,13 +139,13 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/AuthResponse'
+ *               $ref: '#/components/schemas/LoginResponse'
  *       400:
  *         description: User not Found or Invalid credentials
  *         content:
  *           application/json:
  *             schemas:
- *               $ref: '#/components/schemas/ErrorResponse'
+ *               $ref: '#/components/schemas/LoginError'
  *     
  */
 router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)=>{
@@ -152,21 +160,26 @@ router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)
         const data  = matchedData(request)
         
         console.log(data)
-        const user = await User.findOne({email})
+        const user = await User.findOne({email:data.email})
         console.log(user)
         
         //QUERYING USER USING THE EMAIL ID TO CHECK WHETHER THEY EXIST OR NOT 
         if(!user)
         {
-            return response.status(404).json({succes:false,message:"User not found"})
+            return response.json({success:false,message:"User not found"})
+        }
+
+        if(user.role !== 'patient')
+        {
+            return response.json({success:false,message:"Invalid login please create a patient account to login"})
         }
 
         // COMPARING PASSWORDS ENTERED AND THE USER PASSWORD IN OUR DATABASE
-        const passswordMatch = bcrypt.compare(password,user.password)
+        const passswordMatch = await bcrypt.compare(password,user.password)
 
         if(!passswordMatch)
         {
-            return response.status(409).json({succes:false,message:"Invalid username or password"})
+            return response.json({success:false,message:"Invalid username or password"})
         }
 
         // CREATING PAYLOAD OBJECT TO GENERATE JWT BEARER TOKEN
@@ -176,9 +189,10 @@ router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)
             role:user.role
         }
 
+
         const token = generateJwtToken(payload)
 
-        return response.status(200).json({succes:true,token:token,type:'Bearer'})
+        return response.json({success:true,token:token,type:'Bearer'})
 
     } catch (error) {
         console.log(error)
@@ -189,11 +203,19 @@ router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)
 })
 
 
+// google-Oauth20 authentication routes
+
+
+router.get('/api/oauth2/google',passport.authenticate('google',{scope:['profile']}))
+router.get('/api/google/callback',passport.authenticate('google',{failureMessage:'Error something went wrong'}),async(request,response)=>{
+    response.send("Failed")
+})
+
 /***Profile setting routes  */
 
 router.post('/api/user/patient-profile',userMiddleware,checkSchema(patientProfileValidator),upload.fields([{name:'avator',maxCount:1}]),async(request,response)=>{
 
-    const {title,SHA,ID,DOB,phone} = request.body
+    const {title,SHA,ID,DOB,phone} = request.body // getting user input from the requestbody
     const userId = request.user.payload.id
     
     const result = validationResult(request)
@@ -279,7 +301,37 @@ const sendVerificationEmail = (to,from)=>{
 
     
 }
-router.post('/api/user/account-verify',userMiddleware,async(request,response)=>{
+/**
+ * @swagger
+ * /api/user/account-verify:
+ *   post:
+ *     summary: Verify user account using OTP(One-Time-Password)
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserAccountVerification'
+ *     
+ *     responses:
+ *       200:
+ *         description: Account verified successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/VerificationResponse'
+ *       500:
+ *         description: Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/VerificationError'       
+ *               
+ */
+
+
+router.post('/api/user/send-verification-email',userMiddleware,async(request,response)=>{
    try {
     const userId = request.user.payload.id
     const user = User.findById(userId)
@@ -326,6 +378,33 @@ router.post('/api/user/account-verify',userMiddleware,async(request,response)=>{
 })
 
 // ROUTES TO ENABLE APPOINTMENTS
+
+/**
+ * @swagger
+ * /api/user/appointment-booking:
+ *   post:
+ *     summary: Patient Appointment Placing
+ *     tags: [Appointment Booking]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/BookingModel'
+ *     responses:
+ *       201:
+ *         description: Appointment Placed 
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingResponse'
+ *       500:
+ *         description: Failed to process request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/BookingError'
+ */
 
 
 router.post('/api/user/appointment-booking',[body('userSlot').isObject().withMessage("Field must be a valid object"),

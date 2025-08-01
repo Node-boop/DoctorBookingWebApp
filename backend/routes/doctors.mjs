@@ -7,10 +7,12 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import doctorMiddleware from "../middleware/doctorMiddleware.mjs";
 import {v2 as cloudinary} from 'cloudinary'
-import doctorProfile from "../models/doctorProfile.mjs";
+import doctorProfile from "../models/doctor.mjs";
 import upload from "../middleware/multer.mjs";
 import nodemailer from 'nodemailer'
 import userMiddleware from "../middleware/userMiddleware.mjs";
+import Doctor from "../models/doctor.mjs";
+import doctorModel from "../models/doctorModel.mjs";
 import doctorSchedule from "../models/doctor-schedules.mjs";
 const router = Router()
 
@@ -24,10 +26,51 @@ export const generateJwtToken = (payload)=>{
 }
 /**************START OF AUTHENTICATION ROUTES**************/
 
-// creating a new user 
-router.post('/api/user/doctor/register',body(),checkSchema(registerValidator),async(request,response)=>{
+// creating a new user with doctor proviledges
+
+/**
+ * @swagger
+ * /api/user/doctor/register:
+ *   post:
+ *     summary: User with doctor abilities registration
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserRegisterRequest'
+ *     
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DoctorAuthResponse'
+ * 
+ *       
+ *       409:
+ *         description: Conflict
+ *         content:
+ *           applicaion/json:
+ *             schema:
+ *               $ref: '#/components/schemas/RegistrationConflictError'
+ * 
+ *       500:
+ *         description: Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse' 
+ */
+
+
+router.post('/api/user/doctor/register',[body()],checkSchema(registerValidator),async(request,response)=>{
     try {
-        const {name,email,password,password2} = request.body // access your values from the request body
+        const {firstName,lastName,email,password,gender
+
+        } = request.body // access your values from the request body
 
         const result = validationResult(request) // use validator to catch any validation errors from your schema
 
@@ -36,16 +79,12 @@ router.post('/api/user/doctor/register',body(),checkSchema(registerValidator),as
             return response.status(400).json({succes:false,error:result.array()}) // send response back to the user 
         }
 
-        const user = await User.findOne({email}) // check whether user exists in the database and and throw an error 
+        const user = await Doctor.findOne({email}) // check whether user exists in the database and and throw an error 
         if(user)
         {
             return response.status(409).json({succes:false,message:"User already exists"})
         }
-        if(password !== password2) // compare passwords after thay are sent and return a response
-        {
-            return response.status(409).json({succes:false,message:"Passwords do not match"})
-        }
-
+       
         const salt = bcrypt.genSaltSync(10) // Generate dalt rounds to hash the password
 
         const hashedPassword = bcrypt.hashSync(password,salt) // hashing the password from the salt created
@@ -54,10 +93,11 @@ router.post('/api/user/doctor/register',body(),checkSchema(registerValidator),as
         
         data.password = hashedPassword
         console.log(data)
-        const newUser = new User({
-            name:data.name,
+        const newUser = new Doctor({
+            firstName:data.firstName,
+            lastName:data.lastName,
             email:data.email,
-            phone:`${data.phone}`,
+            gender:data.gender,
             role:'doctor',
             password:data.password
         })
@@ -68,7 +108,7 @@ router.post('/api/user/doctor/register',body(),checkSchema(registerValidator),as
             id:newUser._id,
             name:newUser.name,
             email:newUser.email,
-           
+            gender:newUser.gender,
             role:newUser.role
         }
         response.status(201).json({succes:true,user:responseModel})
@@ -82,6 +122,32 @@ router.post('/api/user/doctor/register',body(),checkSchema(registerValidator),as
 
 // logging in users and generating authorization JWT token for each user
 
+/**
+ * @swagger
+ * /api/user/doctor/auth:
+ *   post:
+ *     summary: Authenticate a doctor
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserLoginRequest'
+ *     responses:
+ *       200:
+ *         description: Login Successfull
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginResponse'
+ *       401:
+ *         description: Login Failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginError'
+ */
 router.post('/api/user/doctor/auth',checkSchema(loginValidator),async(request,response)=>{
     try {
         const result = validationResult(request) // catching all validation error from express-validator
@@ -94,7 +160,7 @@ router.post('/api/user/doctor/auth',checkSchema(loginValidator),async(request,re
         const data  = matchedData(request)
         
         console.log(data)
-        const user = await User.findOne({email})
+        const user = await Doctor.findOne({email})
         console.log(user)
         
         //QUERYING USER USING THE EMAIL ID TO CHECK WHETHER THEY EXIST OR NOT 
@@ -111,7 +177,7 @@ router.post('/api/user/doctor/auth',checkSchema(loginValidator),async(request,re
 
         if(!passswordMatch)
         {
-            return response.status(409).json({succes:false,message:"Invalid username or password"})
+            return response.status(409).json({succes:false,message:"Invalid email or password"})
         }
 
         // CREATING PAYLOAD OBJECT TO GENERATE JWT BEARER TOKEN
@@ -137,9 +203,40 @@ router.post('/api/user/doctor/auth',checkSchema(loginValidator),async(request,re
 
 // profile creation setup
 
-router.post('/api/user/doctor/profile',doctorMiddleware,checkSchema(doctorProfileValidator),upload.fields([{name:'image1',maxCount:1},{name:'image2',maxCount:1},{name:'image3',maxCount:1},{name:'imag4',maxCount:1}]),async(request,response)=>{
+/**
+ * @swagger
+ * /api/user/doctor/profile:
+ *   post:
+ *     summary: Doctor Profile creation
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/DoctorProfile'
+ * 
+ *     responses:
+ *       201:
+ *         description: Profile Created!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DoctorProfileResponse'
+ *       500:
+ *         description: Request Failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DoctorProfileError'
+ */
+router.post('/api/user/doctor/profile',doctorMiddleware,upload.fields([{name:'image1',maxCount:1},{name:'image2',maxCount:1},{name:'image3',maxCount:1},{name:'imag4',maxCount:1},{name:'image5',maxCount:1},{name:'profile',maxCount:1},{name:'license',maxCount:1}]),async(request,response)=>{
 
-    const {title,speciality,DOB,ID,experience,qualifications,licenceNumber,Bio,clinicAddress,phone} = request.body
+    const {
+        dateOfBirth,nationality,nationalIdNumber,
+            kraPin,phoneNumber,address,kmpdulicenseNumber,registrationDate,registrationStatus,isLicenseActive,licenseExpiry,educaationBackground,
+            internshipDetails,Bio,workExperience
+    } = request.body
     const userId = request.user.payload.id
     if(request.user.payload.role !== 'doctor' || request.user.payload.role !== 'admin')
     {
@@ -148,45 +245,96 @@ router.post('/api/user/doctor/profile',doctorMiddleware,checkSchema(doctorProfil
     const result = validationResult(request)
     if(!result.isEmpty())
     {
-        throw new Error('error' + result.array())
+        return response.json({success:false,error:result.array()})
     }
     const data = matchedData(request)
     console.log(data)
     
-    const user = await User.findById(userId)
+    const user = await Doctor.findById(userId)
 
     if(!user)
-        throw new Error('User not found')
+        return response.json({success:false,message:"Seems you not logged in"})
+
+    const profile = request.files.profile && request.files.profile[0]
+
+    const profiles = [profile].filter((item)=> item !== undefined)
+
+    const profileUrl = await Promise.all(
+        profiles.map(async(item)=>{
+            let response = await cloudinary.uploader.upload(item.path,{resource_type:'image'})
+            return result.secure_url
+        })
+    )
+
+    const license = request.files.license && request.files.license[0]
+
+    if(license === undefined)
+    {
+        return response.json({success:false,message:"license image id required"})
+    }
+
+    const licenceUrl = await Promise.all(async()=>{
+        let result = await cloudinary.uploader.upload(license.path,{resource_type:'image'})
+        return result.secure_url
+    })
 
 
     const image1 = request.files.image1 && request.files.image1[0]
     const image2 = request.files.image2 && request.files.image2[0]
     const image3 = request.files.image3 && request.files.image3[0]
     const image4 = request.files.image4 && request.files.image4[0]
+    const image5 = request.files.image5 && request.files.image5[0]
 
-    const images = [image1,image2,image3,image4].filter((item)=> item !== undefined)
+    const academicimages = [image1,image2,image3,image4,image5].filter((item)=> item !== undefined)
 
-    const imageUrl = await Promise.all(
-        images.map(async(item)=>{
+    const academicUrls = await Promise.all(
+        academicimages.map(async(item)=>{
+            let result = await cloudinary.uploader.upload(item.path,{resource_type:'image'})
+            return result.secure_url
+        })
+    ) 
+
+
+
+
+    
+
+    const idFront = request.files.idFront && request.files.idFront[0]
+    const idBack = request.files.idBack && request.files.idBack[0]
+    const idImages = [idBack,idFront].filter((item)=> item !== undefined)
+
+    const idImageUrl = await Promise.all(
+        idImages.map(async(item)=>{
             let result = await cloudinary.uploader.upload(item.path,{resource_type:'image'})
             return result.secure_url
         })
     )
 
-    const newProfile = new doctorProfile({
+    const newProfile = new doctorModel({
         userId,
-        title,
-        image:imageUrl,
-        speciality,
+        phoneNumber,
+        nationalIdNumber,
+        nationality,
+        profilePiture:profileUrl,
+        dateOfBirth,
+        kraPin,
+        kmpdulicenseNumber,
+        registrationDate,
+        registrationStatus,
+        licenseExpiry,
+        indentificationDocuments:idImageUrl,
+        licenseImage:licenceUrl,
+        academicDocuments:academicUrls,
+        educaationBackground,
+        internshipDetails,
         Bio,
-        experience,
-        qualifications,
-        licenceNumber,
-        phone,
-        ID,
-        DOB,
+        workExperience
+
 
     })
+
+    await newProfile.save()
+    return response.json({success:true, userProfile:newProfile})
     
 })
 
@@ -277,5 +425,6 @@ router.post('/api/user/doctor/add-slot',
         console.log(error)
     }
 })
+
 
 export default router

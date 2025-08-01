@@ -1,5 +1,5 @@
 export const registerValidator = {
-    name:{
+    firstName:{
         isLength:{
             options:{
                 min:5,
@@ -7,6 +7,25 @@ export const registerValidator = {
             },
             errorMessage:"Username must be atleast 8 to 32 characters "
         },
+        isString:{
+            errorMessage:"Invalid type,name must be a valid string type"
+        },
+        
+    },
+    lastName:{
+        isLength:{
+            options:{
+                min:5,
+                max:32,
+            },
+            errorMessage:"Username must be atleast 8 to 32 characters "
+        },
+        isString:{
+            errorMessage:"Invalid type,name must be a valid string type"
+        },
+        
+    },
+    gender:{
         isString:{
             errorMessage:"Invalid type,name must be a valid string type"
         },
@@ -84,21 +103,7 @@ export const patientProfileValidator = {
 }
 
 export const doctorProfileValidator = {
-    title:{
-        isString:{
-            errorMessage:"Title must be of string value"
-        },
-        isLength:{
-            options:{
-                min:2,
-                max:4
-            },
-            errorMessage:"title cannot me more than 4 characters or less than 2"
-           
-        }
-
-    },
-    phone:{
+    phoneNumber:{
         isLength:{
             options:{
                 min:10,
@@ -113,7 +118,7 @@ export const doctorProfileValidator = {
             errorMessage:"Invalid format enter a valid Phone Number"
         }
     },
-    ID:{
+    nationalIdNumber:{
         isNumeric:{
             errorMessage:"ID number must be a valid positive number or integer"
         },
@@ -126,7 +131,7 @@ export const doctorProfileValidator = {
 
         }
     },
-    licenceNumber:{
+    kmpdulicenseNumber:{
         isString:{
             errorMessage:"Invalid data type licence number must be a valid string"
         },

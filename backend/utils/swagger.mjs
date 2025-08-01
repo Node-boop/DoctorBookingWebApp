@@ -2,6 +2,10 @@ import swaggerJSDoc from 'swagger-jsdoc'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { constrainedMemory } from 'process'
+import { type } from 'os'
+import { deserialize } from 'v8'
+import { stringify } from 'querystring'
+import { profile } from 'console'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -16,7 +20,8 @@ const options = {
         info:{
             title:"Meddicure API Documentation",
             version:'1.0.0',
-            description:'An API to enable patients to book appointemts with a doctor and evaluate the doctor',
+            description:`An API to enable patients to book appointemts with a doctor and evaluate the doctor
+            Be able to get easy access to medical facilities aroung them and get needed imediate or scheduled treatment`,
             contact:{
                 name:"Francis Kamau",
                 url:'http://localhost:5500',
@@ -133,7 +138,203 @@ const options = {
                         },
                     }
                 },
-                AuthResponse:{
+                DoctorProfile:{
+                    type:'object',
+                    required:['ID','licenceNumber','DOB','phone','speciality','experience','qualifications','title','Bio','clinicAddress'],
+                    properties:{
+                        title:{
+                            type:'string',
+                            description:'User preffered use title',
+                            example: 'Dr'
+                        },
+                        clinicAddress:{
+                            type:'object',
+                            required:['name','location','level'],
+                            properties:{
+                                name:{
+                                    type:'string',
+                                    description: 'Name of the medical facility',
+                                    example:'Kenyatta National Hospital'
+                                },
+                                location:{
+                                    type:'object',
+                                    required:['city','constituency','ward','contact'],
+                                    properties:{
+                                        city:{
+                                            type:'string',
+                                            description:'Name of the city or town',
+                                            example: 'Nairobi'
+                                        },
+                                        constituency:{
+                                            type:'string',
+                                            description:'The constituency the hospital is located at',
+                                            example:'Nairobi West'
+                                        },
+                                        ward:{
+                                            type:'string',
+                                            description:'Ward of location',
+                                            example:'Makadara'
+                                        },
+                                        contact:{
+                                            type:'string',
+                                            description: 'Hospital public reachable contact',
+                                            example:'08-808-000'
+
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        ID:{
+                            type:'number',
+                            description: 'National Identificaion number',
+                            example: '392029292'
+                        },
+                        licenseNumber:{
+                            type:'string',
+                            description: 'KMPDU license number',
+                            example: 'KM-20292222'
+                        },
+                        DOB:{
+                            type:'string',
+                            description:'Date of Birth of the user',
+                            example: '1990-05-05'
+                        },
+                        phone:{
+                            type:'string',
+                            description:'Users unique and valid personnal phone number',
+                            example:'254704034126'
+                        },
+                        speciality:{
+                            type:'string',
+                            description:'Field of Specialization',
+                            example:"Dentist"
+                        },
+                        experience:{
+                            type:'number',
+                            description: 'Number of years as a medical practitioner',
+                            example: 10
+
+                        },
+                        qualifications:{
+                            type:'string',
+                            description: 'Highest level of education',
+                            example: 'Masters degree or post graduate'
+                            
+                        }
+                        
+                    }
+                },
+                DoctorProfileResponse:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description:'Describes the outcome status of the request',
+                            example:true
+                        },
+                        message:{
+                            type:'string',
+                            description:'Message after a successfull request',
+                            example:'Profile updated successfully'
+                        },
+                       
+                    }
+                },
+                DoctorProfileError:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description:'response status of the request',
+                            example:false
+                        },
+                        message:{
+                            type:'string',
+                            description:'Error Message after failed request',
+                            example:'Profile setting failed'
+                        }
+                    }
+                },
+                UserAccountVerification:{
+                    type:'object',
+                    required:'otp',
+                    properties:{
+                        otp:{
+                            type:'number',
+                            description: 'Auto generated 8 digit otp',
+                            example:33446756
+                        }
+                    }
+                },
+                BookingModel:{
+                    type:'object',
+                    required:['doctorID','userTime','reason'],
+                    properties:{
+                        doctorID:{
+                            type:'string',
+                            description:"ID to identify a specific doctor ",
+                            example:'60830393h30202cc'
+                        },
+                        userTime:{
+                            type:'string',
+                            description:'User given time & date object to make object',
+                            example:"2025-01-01,0900AM"
+                        },
+                        reason:{
+                            type:'string',
+                            description:'Patient reason for an appointment',
+                            example:'For my last chemotherapy session'
+                        }
+
+                    },
+                },
+                BookingResponse:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'Boolean',
+                            description:'Shows that a booking process was successfull',
+                            example:true
+                        },
+                        message:{
+                            type:'string',
+                            description:'Message to the user after a successfull placement',
+                            example:'Booking successfull redirecting you your profile'
+                        }
+                    }
+                },
+                BookingError:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'Boolean',
+                            description:"Error status or placement outcome",
+                            example:false
+                        },
+                        message:{
+                            type:'string',
+                            description:"Message to indicate the outcome of the request",
+                            example:'Failed to place the booking'
+                        }
+                    },
+                },
+                VerificationResponse:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description: 'Indicates account verification success',
+                            example:true
+                        },
+                         message:{
+                            type:'string',
+                            description:'A message regarding th operation result',
+                            example:'User verified successfully'
+                        },
+                    }
+                },
+                LoginResponse:{
                     type:'object',
                     properties:{
                         success:{
@@ -151,11 +352,54 @@ const options = {
                             description:'JWT token for authorization',
                             example:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.....',
                         },
-                        refreshToken:{
-                            type:'string',
-                            description:'Refresh Token for renewing access token(If applicable)',
-                            example:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.....'
+                    }
+
+                },
+                RegistrationConflictError:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description:'response status',
+                            example:false,
                         },
+                        message:{
+                            type:'string',
+                            description:'Error message from the request',
+                            example:'User already exists'
+                        }
+                    }
+                },
+                LoginError:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description:"Indicates that the process was a success",
+                            example:false
+                        },
+                        message:{
+                            type:'string',
+                            description:'A message regarding th operation result',
+                            example:'User not Found or Invalid credentials'
+                        },
+                    }
+
+                },
+                AuthResponse:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description:"Indicates that the process was a success",
+                            example:true
+                        },
+                        message:{
+                            type:'string',
+                            description:'A message regarding th operation result',
+                            example:'User Registered successfully'
+                        },
+                        
                         user:{
                             type:'object',
                             properties:{
@@ -172,6 +416,51 @@ const options = {
 
                     }
                 },
+                DoctorAuthResponse:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description:"Indicates that the process was a success",
+                            example:true
+                        },
+                        message:{
+                            type:'string',
+                            description:'A message regarding th operation result',
+                            example:'User Registered successfully'
+                        },
+                        
+                        user:{
+                            type:'object',
+                            properties:{
+                                id:{type:'string',example:'68odjsommd944m9393'},
+                                name:{type:'string',example:'John Doe'},
+                                email:{type:'string',format:'email',example:'joona@gmail.com'},
+                                role:{
+                                    type:'string',
+                                    example:"doctor"
+                                }
+                            }
+                        }
+
+
+                    }
+                },
+                VerificationError:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            example:false
+                        },
+                        message:{
+                            type:'string',
+                            description:'Invalid credentials',
+                            example:'Invalid OTP or Expired'
+                        },
+                    },
+
+                },
                 ErrorResponse:{
                     type:'object',
                     properties:{
@@ -181,7 +470,8 @@ const options = {
                         },
                         message:{
                             type:'string',
-                            description:'Invalid credentials'
+                            description:'Invalid credentials',
+                            example:'Invalid login credentials'
                         },
                     },
 
