@@ -9,6 +9,7 @@ import session from 'express-session'
 import connectV2 from './config/cloudinary.mjs'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerSpec from './utils/swagger.mjs'
+import OpenAI from 'openai'
 import swaggerUi from 'swagger-ui-express'
 const app = express()
 
@@ -21,6 +22,8 @@ app.use(routes)
 
 
 app.use('/api/docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
+
+
 
 app.listen(process.env.PORT,()=>{
     console.log(`[+] Server running on port : ${process.env.PORT}`)

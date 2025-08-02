@@ -66,7 +66,7 @@ export const generateJwtToken = (payload)=>{
 
 router.post('/api/user/register',body(),checkSchema(registerValidator),async(request,response)=>{
     try {
-        const {name,email,password,password2} = request.body // access your values from the request body
+        const {firstName,lastName,email,password,password2} = request.body // access your values from the request body
 
         const result = validationResult(request) // use validator to catch any validation errors from your schema
 
@@ -94,7 +94,8 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
         data.password = hashedPassword
         console.log(data)
         const newUser = new User({
-            name:data.name,
+            firstName:data.firstName,
+            lastName:data.lastName,
             email:data.email,
            
             role:'patient',
@@ -161,7 +162,7 @@ router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)
         
         console.log(data)
         const user = await User.findOne({email:data.email})
-        console.log(user)
+        //console.log(user)
         
         //QUERYING USER USING THE EMAIL ID TO CHECK WHETHER THEY EXIST OR NOT 
         if(!user)
@@ -500,6 +501,25 @@ router.post('/api/user/appointment-booking',[body('userSlot').isObject().withMes
         response.json({succes:false,error:error.message})
         
     }
+})
+
+router.get('/api/users/profile',userMiddleware,async(request,response)=>{
+    try {
+        const userID = request.user.payload.id
+
+        const user = await User.findById(userID)
+
+        if(!user)
+            return response.json({success:false,message:"Not Authenticated"})
+
+        return response.json({success:true,user:user})
+    } catch (error) {
+        return response.json({success:false,message:error.message})
+        
+    }
+
+
+
 })
 
 export default router

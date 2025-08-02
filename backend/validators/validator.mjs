@@ -2,10 +2,10 @@ export const registerValidator = {
     firstName:{
         isLength:{
             options:{
-                min:5,
+                min:4,
                 max:32,
             },
-            errorMessage:"Username must be atleast 8 to 32 characters "
+            errorMessage:"FirstName must be atleast 8 to 32 characters "
         },
         isString:{
             errorMessage:"Invalid type,name must be a valid string type"
@@ -15,10 +15,10 @@ export const registerValidator = {
     lastName:{
         isLength:{
             options:{
-                min:5,
+                min:4,
                 max:32,
             },
-            errorMessage:"Username must be atleast 8 to 32 characters "
+            errorMessage:"LastName must be atleast 8 to 32 characters "
         },
         isString:{
             errorMessage:"Invalid type,name must be a valid string type"

@@ -1,4 +1,4 @@
-import { response, Router } from "express";
+import { request, response, Router } from "express";
 import User from "../models/users.mjs";
 import Doctor from "../models/doctor.mjs";
 
@@ -81,6 +81,15 @@ router.get('/api/super/list-doctors',async(request,response)=>{
         
     }
 })
-
+router.post('/api/super/delete/patients',async(request,response)=>{
+   try {
+     await User.deleteMany({})
+     return response.json({success:true,messages:"Database cleared"})
+   } catch (error) {
+    return response.json({success:false,message:error.message})
+    
+   }
+    
+})
 
 export default router
