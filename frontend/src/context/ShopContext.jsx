@@ -8,6 +8,7 @@ export const ShopContext = createContext()
 const ShopContextProvider = (props)=>{
      const [token,setToken] = useState('')
      const [showAccountMenu,setShowAccountMenu] = useState(false)
+     const [showHeader,setShowHeader] = useState(true)
      const navigate = useNavigate()
      const backendUrl = 'http://localhost:5500'
 

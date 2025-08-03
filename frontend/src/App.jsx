@@ -11,6 +11,7 @@ import AuthPage from "./pages/AuthPage";
 import NewsLetter from "./components/NewsLetter";
 import Footer from "./components/Footer";
 import MenuBottom from "./components/MenuBottom";
+import Profile from "./pages/Profile";
 
 const App = ()=>{
   return(
@@ -27,6 +28,7 @@ const App = ()=>{
         <Route path="/about-us" element={<About />}/>
         <Route path="/contact-us" element={<Contact />}/>
         <Route path="/auth0" element={<AuthPage />}/>
+        <Route path="/profile" element={<Profile />}/>
       </Routes>
     <div className="mt-5">
       

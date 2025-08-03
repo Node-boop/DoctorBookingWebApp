@@ -8,3 +8,62 @@
  a.active p{
    color: blue;
  }
+
+ .typewriter{
+  overflow: hidden; /* Ensures the text is hidden until typed */
+  white-space: nowrap; /* Keeps all text on one line */
+  border-right: 0.15em solid orange; /* Blinking cursor effect */
+  font-family: monospace; /* Typewriter-like font */
+  font-size: 1em;
+  width: 0; /* Starts with no visible text */
+
+  /* Combined animation for typing and blinking, with repetition */
+  animation: typing 4s steps(40, end) infinite, /* typing animation, now infinite */
+             blink-caret 0.75s step-end infinite; /* cursor blinking animation, already infinite */
+}
+
+/* Typing animation */
+@keyframes typing{
+  from { width: 0 }
+  to { width: 100% }
+}
+
+
+/* Blinking cursor animation */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: orange }
+}
+
+
+
+
+.authHeading{
+  overflow: hidden; /* Ensures the text is hidden until typed */
+  white-space: nowrap; /* Keeps all text on one line */
+  border-right: 0.15em solid orange; /* Blinking cursor effect */
+  font-family: 'Times New Roman', Times, serif; /* Typewriter-like font */
+  font-size: 1em;
+  width: 0; /* Starts with no visible text */
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 900;
+  color: slategrey;
+
+  /* Combined animation for typing and blinking, with repetition */
+  animation: typing 4s steps(40, end) infinite, /* typing animation, now infinite */
+             blink-caret 0.75s step-end infinite; /* cursor blinking animation, already infinite */
+}
+
+/* Typing animation */
+@keyframes typing{
+  from { width: 0 }
+  to { width: 100% }
+}
+
+
+/* Blinking cursor animation */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: orange }
+}

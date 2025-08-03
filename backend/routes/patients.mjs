@@ -66,13 +66,13 @@ export const generateJwtToken = (payload)=>{
 
 router.post('/api/user/register',body(),checkSchema(registerValidator),async(request,response)=>{
     try {
-        const {firstName,lastName,email,password,password2} = request.body // access your values from the request body
+        const {firstName,lastName,email,gender,password} = request.body // access your values from the request body
 
         const result = validationResult(request) // use validator to catch any validation errors from your schema
 
         if(!result.isEmpty())
         {
-            return response.status(400).json({succes:false,error:result.array()}) // send response back to the user 
+            return response.json({succes:false,error:result.array()}) // send response back to the user 
         }
 
         const user = await User.findOne({email}) // check whether user exists in the database and and throw an error 
@@ -80,10 +80,12 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
         {
             return response.status(409).json({succes:false,message:"User already exists"})
         }
+        /*
         if(password !== password2) // compare passwords after thay are sent and return a response
         {
             return response.status(409).json({succes:false,message:"Passwords do not match"})
         }
+        */
 
         const salt =await bcrypt.genSalt(10) // Generate dalt rounds to hash the password
 
@@ -97,6 +99,7 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
             firstName:data.firstName,
             lastName:data.lastName,
             email:data.email,
+            gender:gender,
            
             role:'patient',
             password:data.password
@@ -111,7 +114,13 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
             phone:newUser.phone,
             role:newUser.role
         }
-        response.status(201).json({succes:true,user:responseModel})
+        const payload = {
+            id:newUser._id,
+            role:newUser.role
+        }
+
+        const token = generateJwtToken(payload)
+        response.json({success:true,user:responseModel,message:"User created!",token:token})
     } catch (error) {
         console.log(error)
         return response.status(500).json({succes:false,message:error.message}) // catching errors and diplaying them

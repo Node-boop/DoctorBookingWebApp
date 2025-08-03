@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 const userMiddleware  = async(request,response,next)=>{
     const authorizationHeader = request.headers.authorization
-    console.log(request.headers)
+    
    
     if(!authorizationHeader)
     {
@@ -15,7 +15,7 @@ const userMiddleware  = async(request,response,next)=>{
 
     if(!token)
     {
-        return response.status(400).json({succes:false,errorMessage:"JWT Bearer token missing in the request"})
+        return response.json({succes:false,errorMessage:"JWT Bearer token missing in the request"})
     }
 
     try {
@@ -27,7 +27,7 @@ const userMiddleware  = async(request,response,next)=>{
         next()
     } catch (error) {
 
-        return response.status(400).json({succes:false,errorMessage:"JWT Bearer provided is invalid or Expired"})
+        return response.json({succes:false,errorMessage:"JWT Bearer provided is invalid or Expired"})
     }
 }
 
