@@ -179,4 +179,147 @@ router.post("/api/user/cart/add",userMiddleware, async(request, response) => {
 
 });
 
+// Route to remove a product from the user's cart
+// This route allows the authenticated user to remove a product from their cart.
+// It checks if the user is authenticated and if the product exists in their cart.
+// If the user is not authenticated, it returns a 401 Unauthorized status.
+// If the product does not exist in the cart, it returns a 404 Not Found status
+
+/**
+ * @swagger
+ * /api/user/cart/remove:
+ *   post:
+ *     summary: Remove a product from the user's cart
+ *     description: Remove a product from the authenticated user's cart.
+ *     tags: [Cart]
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/RemoveCartItemRequest'
+ *     responses:
+ *       200:
+ *         description: Successfully removed product from cart.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/RemoveCartItemResponse'
+ *       400:
+ *         description: Bad request. Missing required fields or invalid data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post("/api/user/cart/remove",userMiddleware, async(request, response) => {
+    // Extracting userId and productId from the request body
+    // It assumes that the user ID is stored in the request object by middleware
+    // and that the product ID is provided in the request body.
+    const { userId, productId } = request.body;
+    // Assuming userId is stored in the request object by middleware
+    const user = await User.findById(userId);
+    // Check if the user exists
+    // If the user does not exist, it returns a 404 Not Found status with an
+    if (!user) {
+        return response.status(404).json({ error: "User not found" });
+    }
+    if (!userId || !productId) {
+        return response.status(400).json({ error: "Missing required fields" });
+    }
+    if (!request.user || request.user.id !== userId) {
+        return response.status(403).json({ error: "Unauthorized action" }); 
+    }
+    // Here you would typically check if the product exists in the user's cart
+    // and if the user has permission to remove it from their cart.
+    const productInCart = user.cartData.find(item => item.productId === productId);
+    if (!productInCart) {
+        return response.status(404).json({ error: "Product not found in cart" });   
+    }
+    // If the product exists in the cart, you would remove it from the user's cart.
+    user.cartData = user.cartData.filter(item => item.productId !== productId); // Remove product from cart
+    user.updatedAt = new Date().getTime();
+    await user.save(); // Save the updated user document
+
+    response.status(200).json({
+        message: "Product removed from cart successfully",
+        userId,
+        productId
+    });
+
+
+
+});
+
+// update the cart quantity
+// This route allows the authenticated user to update the quantity of a product in their cart.
+// It checks if the user is authenticated and if the product exists in their cart.
+
+/**
+ * @swagger
+ * /api/user/cart/update:
+ *   post:
+ *     summary: Update product quantity in the user's cart
+ *     description: Update the quantity of a product in the authenticated user's cart.
+ *     tags: [Cart]
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/UpdateCartRequest'
+ *     responses:
+ *       200:
+ *         description: Successfully updated product quantity in cart.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UpdateCartResponse'
+ *       400:
+ *         description: Bad request. Missing required fields or invalid data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UpdateCartError'
+ */
+router.post("/api/user/cart/update",userMiddleware, async(request, response) => {
+    // Extracting userId, productId, and quantity from the request body
+    // It assumes that the user ID is stored in the request object by middleware
+    // and that the product ID and quantity are provided in the request body.
+    const { userId, productId, quantity } = request.body;
+    // Assuming userId is stored in the request object by middleware
+    const user = await User.findById(userId);
+    // Check if the user exists
+    // If the user does not exist, it returns a 404 Not Found status with an
+    if (!user) {
+        return response.status(404).json({ error: "User not found" });
+    }
+    if (!userId || !productId || !quantity) {
+        return response.status(400).json({ error: "Missing required fields" });
+    }
+    if (typeof quantity !== 'number' || quantity <= 0) {
+        return response.status(400).json({ error: "Quantity must be a positive number" });
+    }
+    if (!request.user || request.user.id !== userId) {
+        return response.status(403).json({ error: "Unauthorized action" });
+    }
+    // Here you would typically check if the product exists in the user's cart
+    // and if the user has permission to update its quantity.
+    const productInCart = user.cartData.find(item => item.productId === productId);
+    if (!productInCart) {
+        return response.status(404).json({ error: "Product not found in cart" });
+    }
+    // If the product exists in the cart, you would update its quantity.
+    productInCart.quantity = quantity; // Update quantity
+    user.updatedAt = new Date().getTime();
+    await user.save(); // Save the updated user document
+
+    response.status(200).json({
+        message: "Product quantity updated successfully",
+        userId,
+        productId,
+        quantity
+    });
+});
+
 export default router;

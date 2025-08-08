@@ -1,9 +1,35 @@
 import { request, response, Router } from "express";
 import User from "../models/users.mjs";
 import Doctor from "../models/doctor.mjs";
-
+import jwt from 'jsonwebtoken'
 
 const router = Router()
+
+const generateAdminToken = (email,password)=>{
+    const token = jwt.sign({email+password},process.env.JWT_SECRET_KEY,{expiresIn:'1h'})
+
+    return token
+
+}
+
+
+router.post('/api/user/admin/auth',async(request,response)=>{
+
+    const {email,password} = request.body
+
+    if(email !== process.env.ADMIN_EMAIL || password !== process.env.ADMIN_PASSWORD)
+        return response.status(403).json({success:false,message:"Invalid email or password"})
+
+
+
+    const token = generateAdminToken(process.env.ADMIN_EMAIL,process.env.ADMIN_PASSWORD)
+
+    return response.status(200).json({success:true,token:token,type:'Bearer'})
+
+
+
+})
+
 
 
 

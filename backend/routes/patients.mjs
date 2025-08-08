@@ -15,6 +15,7 @@ import doctorSchedule from "../models/doctor-schedules.mjs";
 import booking from '../models/booking.mjs'
 import '../strategies/google-Oath20-strategy.mjs'
 import passport from "passport";
+import Review from "../models/reviews.mjs";
 const router = Router()
 
 
@@ -574,6 +575,73 @@ router.get('/api/users/profile',userMiddleware,async(request,response)=>{
 
 
 
+})
+
+// doctor reviews
+
+/** * @swagger
+ * /api/user/doctor-review:
+ *   post:
+ *     summary: Submit a review for a doctor
+ *     tags: [Doctor Reviews]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               doctorID:
+ *                 type: string
+ *                 description: The ID of the doctor being reviewed.
+ *               review:
+ *                 type: string
+ *                 description: The review text.
+ *     responses:
+ *       201:
+ *         description: Review submitted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Review submitted successfully.
+ */
+router.post('/api/user/doctor-review',userMiddleware,async(request,response)=>{
+    // This route allows a user to submit a review for a doctor.
+    // It expects the request body to contain the doctor's ID and the review text.
+    // The user must be authenticated to access this route, enforced by the userMiddleware.
+    // If the review is successfully saved, it returns a 201 Created status with the review details.
+    // If there are any validation errors, it returns a 400 Bad Request status with the error details.
+    // If there is an internal server error, it returns a 500 Internal Server Error status with the error message.
+    try {
+        const {doctorID,review} = request.body
+        const userID = request.user.payload.id
+
+        if(!doctorID || !review)
+            return response.status(400).json({success:false,message:"Doctor ID and review are required"})
+
+        const newReview = new Review({
+            doctorID,
+            userID,
+            review
+        })
+
+        // Save the review to the database (assuming you have a Review model)
+        // await Review.create(newReview)
+        await newReview.save()
+
+        return response.status(201).json({success:true,message:"Review submitted successfully",review:newReview})
+    } catch (error) {
+        console.log(error)
+        return response.status(500).json({success:false,message:error.message})
+        
+    }
 })
 
 export default router

@@ -24,7 +24,7 @@ const options = {
             customSiteTitle: 'My App Name - API Docs',
 
             title:"Meddicure API Documentation",
-            
+
             version:'1.0.0',
 
             description:"This is the API documentation for the Meddicure application, which provides endpoints for user registration, authentication, doctor profiles, pharmacy management, and more.",
@@ -470,7 +470,89 @@ const options = {
                             example:2
                         }
                     }
-                },  
+                }, 
+                UpdateCartRequest:{
+                    type:'object',
+                    required:['userId','productId','quantity'],
+                    properties:{
+                        userId:{
+                            type:'string',
+                            description:'ID of the user whose cart is being updated',
+                            example:'60d5ec49c6d4a20015f3a0a1'
+                        },  
+                        productId:{
+                            type:'string',
+                            description:'ID of the product to be updated in the cart',
+                            example:'60d5ec49c6d4a20015f3a0a2'
+                        },
+                        quantity:{
+                            type:'number',
+                            description:'New quantity of the product in the cart',
+                            example:3
+                        }
+                    }
+                },
+                UpdateCartResponse:{
+                    type:'object',
+                    properties:{
+                        message:{
+                            type:'string',
+                            description:'Message indicating the result of the operation',
+                            example:'Cart updated successfully'
+                        },  
+                        updatedCart:{
+                            type:'array',
+                            items:{
+                                $ref:'#/components/schemas/CartItem'
+                            },
+                            
+                            description:'Array of updated cart items'
+                        }
+                    }   
+                },
+                UpdateCartError:{
+                    type:'object',
+                    properties:{
+                        error:{
+                            type:'string',
+                            description:'Error message indicating the reason for failure',
+                            example:'Failed to update cart due to validation error'
+
+                        }
+                    }   
+                },
+                RemoveCartItemRequest:{
+                    type:'object',
+                    required:['userId','productId'],
+                    properties:{
+                        userId:{
+                            type:'string',
+                            description:'ID of the user whose cart item is being removed',
+                            example:'60d5ec49c6d4a20015f3a0a1'
+                        },
+                        productId:{
+                            type:'string',
+                            description:'ID of the product to be removed from the cart',
+                            example:'60d5ec49c6d4a20015f3a0a2'
+                        }
+                    }
+                },
+                RemoveCartItemResponse:{
+                    type:'object',
+                    properties:{
+                        message:{  
+                            type:'string',
+                            description:'Message indicating the result of the operation',
+                            example:'Cart item removed successfully'
+                        },  
+                        removedItemId:{
+                            type:'string',
+                            description:'ID of the removed cart item',
+                            example:'60d5ec49c6d4a20015f3a0a2'
+                        }   
+                    }   
+                },
+
                 CartResponse:{
                     type:'object',
                     properties:{
@@ -549,8 +631,229 @@ const options = {
                         }
                     }
                 },
-                
-                VerificationResponse:{
+                UserProfileRequest:{
+                    type:'object',
+                    required:['userID'],
+                    properties:{
+                        userID:{
+                            type:'string',
+                            description:'ID of the user whose profile is being requested',
+                            example:'60d5ec49c6d4a20015f3a0a1'
+                        }
+                    }
+                },
+                UserProfileResponse:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean', 
+                            description:'Indicates that the profile was retrieved successfully',
+                            example:true
+                        },
+                        message:{
+                            type:'string',
+                            description:'Message indicating the result of the operation',
+                            example:'User profile retrieved successfully'
+                        },
+                        userProfile:{
+                            type:'object',
+                            properties:{
+                                userId:{
+                                    type:'string',
+                                    description:'ID of the user',
+                                    example:'60d5ec49c6d4a20015f3a0a1'
+                                },
+                                name:{  
+                                    type:'string',
+                                    description:'Full name of the user',
+                                    example:'John Doe'
+                                },
+                                email:{
+                                    type:'string',
+                                    format:'email',
+                                    description:'Email address of the user',
+                                    example:'johndoe@gmail.com',
+                                },
+                                phone:{
+                                    type:'string',
+                                    description:'Phone number of the user',
+                                    example:'254704034126'
+                                },
+                                address:{
+                                    type:'array',
+                                    items:{
+                                        type:'object',
+                                        properties:{
+                                            county:{
+                                                type:'string',
+                                                description:'County of the user\'s address',
+                                                example:'Nairobi'
+                                            },
+                                            subCounty:{
+                                                type:'string',
+                                                description:'Sub-county of the user\'s address',
+                                                example:'Westlands'
+                                            },
+                                            ward:{
+                                                type:'string',
+                                                description:'Ward of the user\'s address',
+                                                example:'Parklands'
+                                            },
+                                            location:{
+                                                type:'string',
+                                                description:'Location of the user\'s address',
+                                                example:'Kilimani'
+                                            },
+                                            subLocation:{
+                                                type:'string',
+                                                description:'Sub-location of the user\'s address',
+                                                example:'Kilimani Estate'
+                                            },
+                                            estate:{
+                                                type:'string',  
+                                                description:'Estate of the user\'s address',
+                                                example:'Kilimani Estate'
+                                            }   
+                                        }
+                                    },
+                                    description:'Array of address objects for the user'
+                                },
+                                nextOfKin:{
+                                    type:'array',
+                                    items:{
+                                        type:'object',  
+                                        properties:{
+                                            name:{
+                                                type:'string',
+                                                description:'Name of the next of kin',
+                                                example:'Jane Doe'
+                                            },  
+                                            relationShip:{
+                                                type:'string',
+                                                description:'Relationship to the user',
+                                                example:'Sister'
+                                            },
+                                            phoneNumber:{
+                                                type:'string',
+                                                description:'Phone number of the next of kin',
+                                                example:'254704034126'
+                                            }
+                                        }
+                                    },
+                                    description:'Array of next of kin objects for the user'
+                                }
+                            }
+                        }
+                    }
+                },
+                UserProfileError:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description:'Indicates that the profile retrieval failed',
+                            example:false
+                        },
+                        message:{
+                            type:'string',  
+                            description:'Error message indicating the reason for failure',
+                            example:'Failed to retrieve user profile due to server error'
+                        }
+                    }
+                },
+                UserProfileUpdateRequest:{
+                    type:'object',
+                    required:['userId'],
+                    properties:{
+                        userId:{
+                            type:'string',
+                            description:'ID of the user whose profile is being updated',
+                            example:'60d5ec49c6d4a20015f3a0a1'
+                        },
+                        name:{
+                            type:'string',
+                            description:'Full name of the user',
+                            example:'John Doe'
+                        },
+                        email:{
+                            type:'string',
+                            format:'email',
+                            description:'Email address of the user',
+                            example:'johndoe@gmail.com',
+                        },
+                        phone:{
+                            type:'string',
+                            description:'Phone number of the user',
+                            example:'254704034126'  
+                        },
+                        address:{
+                            type:'array',
+                            items:{ 
+                                type:'object',
+                                properties:{
+                                    county:{
+                                        type:'string',
+                                        description:'County of the user\'s address',
+                                        example:'Nairobi'
+                                    },
+                                    subCounty:{
+                                        type:'string',
+                                        description:'Sub-county of the user\'s address',
+                                        example:'Westlands'
+                                    },
+                                    ward:{
+                                        type:'string',
+                                        description:'Ward of the user\'s address',
+                                        example:'Parklands'
+                                    },  
+                                    location:{
+                                        type:'string',
+                                        description:'Location of the user\'s address',
+                                        example:'Kilimani'
+                                    },
+                                    subLocation:{
+                                        type:'string',
+                                        description:'Sub-location of the user\'s address',
+                                        example:'Kilimani Estate'
+                                    },
+                                    estate:{
+                                        type:'string',
+                                        description:'Estate of the user\'s address',
+                                        example:'Kilimani Estate'
+                                    }
+                                }
+                            },
+                            description:'Array of address objects for the user'
+                        },
+                        nextOfKin:{
+                            type:'array',
+                            items:{
+                                type:'object',
+                                properties:{
+                                    name:{
+                                        type:'string',
+                                        description:'Name of the next of kin',
+                                        example:'Jane Doe'
+                                    },
+                                    relationShip:{
+                                        type:'string',
+                                        description:'Relationship to the user',
+                                        example:'Sister'
+                                    },
+                                    phoneNumber:{   
+                                        type:'string',
+                                        description:'Phone number of the next of kin',
+                                        example:'254704034126'
+                                    }
+                                }
+                            },  
+                            description:'Array of next of kin objects for the user'
+                        }
+                    }
+                },
+
+                                    
+                VerificationResponse:{  
                     type:'object',
                     properties:{
                         success:{
