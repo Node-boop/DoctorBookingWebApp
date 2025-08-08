@@ -5,7 +5,6 @@ import mongoose from 'mongoose'
 import connectMongoDB from './config/mongodb.mjs'
 import routes from './routes/index.mjs'
 import passport from 'passport'
-import session from 'express-session'
 import connectV2 from './config/cloudinary.mjs'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerSpec from './utils/swagger.mjs'
@@ -20,6 +19,10 @@ app.use(cors())
 app.use(express.json())
 
 app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Set to true if using HTTPS
    
 }))
 

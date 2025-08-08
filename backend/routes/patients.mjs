@@ -442,6 +442,17 @@ router.post('/api/user/appointment-booking',[body('userSlot').isObject().withMes
     body('doctorID').isString().withMessage('Field must be of data type string'),
     body('reason').isString().withMessage("reason field must be a valid data type of string")
 ],userMiddleware,async(request,response)=>{
+    // This route allows a user to book an appointment with a doctor.
+    // It expects the user to provide the doctor's ID, the desired time slot, and the reason for the visit in the request body.
+    // The user must be authenticated to access this route
+    // The route uses the doctorSchedule model to find available slots for the specified doctor.
+    // If the slot is available, it creates a new booking in the booking model.
+    // If the booking is successful, it returns a 201 Created status with the booking details
+    // If the slot is not available or already booked, it returns a 404 Not Found status with an error message.
+    // If there are any validation errors, it returns a 400 Bad Request status with the error details.
+    // If there is an internal server error, it returns a 500 Internal Server Error status with the error message.
+    // The response includes a success flag and the booking details if successful.
+    // The user must be authenticated to access this route, enforced
     try {
 
         const {doctorID,userSlot,reason} = request.body
@@ -533,7 +544,20 @@ router.post('/api/user/appointment-booking',[body('userSlot').isObject().withMes
     }
 })
 
+
+// Route to get the authenticated user's profile
+// This route retrieves the profile of the authenticated user.
+// It checks if the user is authenticated and returns their profile information.
+// If the user is not authenticated, it returns a 401 Unauthorized status.
+// If the user is found, it returns a 200 OK status with the user's profile data
+
+
+
+ 
 router.get('/api/users/profile',userMiddleware,async(request,response)=>{
+    // Extracting the user ID from the request object
+    // The user ID is assumed to be stored in the request object by the userMiddleware.
+    // This ID is used to query the database for the user's profile.
     try {
         const userID = request.user.payload.id
 

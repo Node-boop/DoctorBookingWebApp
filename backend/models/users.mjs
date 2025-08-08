@@ -64,9 +64,13 @@ const userSchema = new mongoose.Schema({
         default:new Date
     },
     cartData:{
-        type:Object,
-        
-    }
+        type:Array,
+        default:[]
+    },
+    wishList:{
+        type:Array,
+        default:[]
+    },
     
 
 

@@ -14,14 +14,27 @@ const projectRoot = path.resolve(__dirname, '..') // navigate 1 directory up
 console.log(projectRoot)
 
 const options = {
+    
     definition:{
         openapi:'3.0.0', //API version,
+
+
     
         info:{
+            customSiteTitle: 'My App Name - API Docs',
+
             title:"Meddicure API Documentation",
+            
             version:'1.0.0',
-            description:`An API to enable patients to book appointemts with a doctor and evaluate the doctor
-            Be able to get easy access to medical facilities aroung them and get needed imediate or scheduled treatment`,
+
+            description:"This is the API documentation for the Meddicure application, which provides endpoints for user registration, authentication, doctor profiles, pharmacy management, and more.",
+            termsOfService:'http://localhost:5500/terms',
+            license:{
+                name:'MIT',
+                url:'https://opensource.org/license/mit-license/'
+            },
+
+
             contact:{
                 name:"Francis Kamau",
                 url:'http://localhost:5500',
@@ -319,6 +332,224 @@ const options = {
                         }
                     },
                 },
+                PharmacyModel:{
+                    type:'object',
+                    required:['medicineName','category','price','instock','image'],
+                    properties:{
+                        medicineName:{
+                            type:'string',
+                            description:'Name of the medicine',
+                            example:'Paracetamol'
+                        },
+                        category:{
+                            type:'string',
+                            description:'Category of the medicine',
+                            example:'Pain Reliever'
+                        },
+                        price:{
+                            type:'number',
+                            description:'Price of the medicine',
+                            example: 100.00
+                        },
+                        instock:{
+                            type:'number',
+                            description:'Number of items in stock',
+                            example: 50
+                        },
+                        image:{
+                            type:'array',
+                            items:{
+                                type:'string',
+                                format:'uri',
+                                description:'Image URL of the medicine',
+                                example:'https://example.com/image.jpg'
+                            },
+                            description:'Array of image URLs for the medicine'
+                        },
+                        available:{
+                            type:'boolean',
+                            description:'Availability status of the medicine',
+                            example:true
+                        },
+                        createdAt:{
+                            type:'number',
+                            description:'Timestamp when the medicine was added',
+                            example: 1700000000 // Example timestamp
+                        },
+                        updatedAt:{
+                            type:'number',
+                            description:'Timestamp when the medicine was last updated',
+                            example: 1700000000 // Example timestamp
+                        }
+                    }
+                },
+                PharmacyResponse:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description:'Indicates that the medicine was added successfully',
+                            example:true
+                        },
+                        message:{
+                            type:'string',
+                            description:'Message indicating the result of the operation',
+                            example:'Medicine added successfully'
+                        },
+                        medicineId:{
+                            type:'string',
+                            description:'ID of the added medicine',
+                            example:'60d5ec49c6d4a20015f3a0a1'
+                        }
+                    }
+                },
+                PharmacyError:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description:'Indicates that the operation failed',
+                            example:false
+                        },
+                        message:{
+                            type:'string',
+                            description:'Error message indicating the reason for failure',
+                            example:'Failed to add medicine due to validation error'
+                        }
+                    }
+                },
+                PharmacyListResponse:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean', 
+                            description:'Indicates that the list was retrieved successfully',
+                            example:true
+                        },
+                        message:{
+                            type:'string',
+                            description:'Message indicating the result of the operation',
+                            example:'Pharmacy list retrieved successfully'
+                        },
+                        medicines:{
+                            type:'array',
+                            items:{
+                                $ref:'#/components/schemas/PharmacyModel'
+                            },
+                            description:'Array of pharmacy items'
+                        }
+                    }
+                },
+                PharmacyListError:{
+                    type:'object',
+                    properties:{
+                        success:{
+                            type:'boolean',
+                            description:'Indicates that the operation failed',
+                            example:false
+                        },
+                        message:{
+                            type:'string', 
+                            description:'Error message indicating the reason for failure',
+                            example:'Failed to retrieve pharmacy list due to server error'
+                        }
+                    }
+                },
+                CartItem:{
+                    type:'object',
+                    required:['productId','quantity'],
+                    properties:{
+                        productId:{
+                            type:'string',
+                            description:'ID of the product in the cart',
+                            example:'60d5ec49c6d4a20015f3a0a1'
+                        },
+                        quantity:{
+                            type:'number',
+                            description:'Quantity of the product in the cart',
+                            example:2
+                        }
+                    }
+                },  
+                CartResponse:{
+                    type:'object',
+                    properties:{
+                        message:{
+                            type:'string',
+                            description:'Message indicating the result of the operation',
+                            example:'Cart retrieved successfully'
+                        },
+                        cartData:{
+                            type:'array', 
+                            items:{
+                                $ref:'#/components/schemas/CartItem'
+                            }, 
+                            description:'Array of items in the cart'
+                        }   
+                    }
+                },
+                CartError:{
+                    type:'object', 
+                    properties:{
+                        error:{
+                            type:'string',
+                            description:'Error message indicating the reason for failure',  
+                            example:'Failed to retrieve cart due to server error'
+                        }
+                    }
+                },
+                AddToCartRequest:{
+                    type:'object',
+                    required:['userId','productId','quantity'],
+                    properties:{
+                        userId:{    
+                            type:'string',
+                            description:'ID of the user adding the product to the cart',
+                            example:'60d5ec49c6d4a20015f3a0a1'
+                        },
+                        productId:{
+                            type:'string',
+                            description:'ID of the product to be added to the cart',
+                            example:'60d5ec49c6d4a20015f3a0a2'
+                        },
+                        quantity:{
+                            type:'number',
+                            description:'Quantity of the product to be added to the cart',
+                            example:1
+                        }
+                    }
+                },
+                AddToCartResponse:{   
+                    type:'object',
+                    properties:{
+                        message:{   
+                            type:'string',
+                            description:'Message indicating the result of the operation',
+                            example:'Product added to cart successfully'
+                        },
+                        userId:{
+                            type:'string',
+                            description:'ID of the user who added the product to the cart',
+                            example:'60d5ec49c6d4a20015f3a0a1'
+                        },
+                        productId:{
+                            type:'string',
+                            description:'ID of the product that was added to the cart',
+                            example:'60d5ec49c6d4a20015f3a0a2'
+                        }
+                    }
+                },
+                AddToCartError:{
+                    type:'object',
+                    properties:{
+                        error:{
+                            type:'string',  
+                            description:'Error message indicating the reason for failure',
+                            example:'Failed to add product to cart due to validation error'
+                        }
+                    }
+                },
+                
                 VerificationResponse:{
                     type:'object',
                     properties:{

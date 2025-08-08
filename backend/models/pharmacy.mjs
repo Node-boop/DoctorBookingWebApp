@@ -3,16 +3,16 @@ import mongoose from "mongoose";
 const pharmacySchema = new mongoose.Schema({
     medicineName:{
         type:String,
-        required:true,
+        required:[true,'Name field cannot be null'],
         trim:true,
         
     },
     category:{
-        type:{String,required:true,trim:true}
+        type:String,required:[true , 'Category is required'],trim:true
     },
     price:{
         type:Number,
-        required:true,
+        required:[true, 'Price field cannot be empty'],
         default:0.00
 
     },
@@ -20,7 +20,10 @@ const pharmacySchema = new mongoose.Schema({
         type:Number,
         required:true,
     },
-    image:{type:Array},
+    image:{
+        type:Array,
+        required:[true,'Image urls needed']
+    },
     available:{
         type:Boolean,
         default:true,
