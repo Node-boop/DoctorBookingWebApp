@@ -179,3 +179,17 @@ export const doctorProfileValidator = {
         }
     }
 }
+
+export const medicinePostValidator = {
+    name:{
+        isString:{
+            errorMessage:"The name field must be of data type string"
+        }
+    },
+    category:{
+        isString:{
+            errorMessage:"The category field must be of data type string"
+        }
+    },
+    
+}

@@ -118,7 +118,18 @@ const userProfileSchema = new mongoose.Schema({
             isActive:{type:Boolean,default:false},
             expiryDate:{typ:Date,}
         }]
-    }]
+    }],
+    profilePhoto:{
+        type:String,
+       
+    },
+    createdAt:{
+        type:Date,
+        default:new Date
+    },updatedAt:{
+        type:Date,
+        default:new Date
+    }
     
 })
 

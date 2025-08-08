@@ -223,10 +223,11 @@ router.get('/api/google/callback',passport.authenticate('google',{failureMessage
 
 /***Profile setting routes  */
 
-router.post('/api/user/patient-profile',userMiddleware,checkSchema(patientProfileValidator),upload.fields([{name:'avator',maxCount:1}]),async(request,response)=>{
+router.post('/api/user/patient-profile',userMiddleware,upload.fields([{name:'avator',maxCount:1}]),async(request,response)=>{
 
-    const {title,SHA,ID,DOB,phone} = request.body // getting user input from the requestbody
+    const {contact,address,nextOfKin,title,medicalInformation,identification,insuranceInformation,} = request.body // getting user input from the requestbody
     const userId = request.user.payload.id
+    
     
     const result = validationResult(request)
     if(!result.isEmpty())
@@ -245,6 +246,21 @@ router.post('/api/user/patient-profile',userMiddleware,checkSchema(patientProfil
 
     const images = [avator].filter((image)=> image !== undefined)
 
+    const image1 = request.files.image1 && request.files.image1[0]
+    const image2 = request.files.image2 && request.files.image2[0]
+
+    const idImaged = [image1,image2].filter((item)=> item !== undefined)
+
+    const kraImg = request.files.kraImg && request.files.kraImg[0]
+
+    const kraImageUrl = await Promise.all(
+        async()=>{
+            let url = await cloudinary.uploader.upload(kraImg.path,{resource_type:'image'})
+            return url.secure_url;
+
+        }
+    ) 
+
     const imageUrl = await Promise.all(
         images.map(async(image)=>{
             let response = await cloudinary.uploader.upload(image.path,{resource_type:'image'})
@@ -252,14 +268,19 @@ router.post('/api/user/patient-profile',userMiddleware,checkSchema(patientProfil
         })
     )
     let dateOfBirth = new Date(DOB)
+    identification.Image = imageUrl;
+    identification.kraImage = kraImageUrl
+    
     const newProfile = new userProfile({
         userId:user._id,
         title,
-        SHA,
-        ID,
-        phone,
-        DOB:dateOfBirth,
-        avator:imageUrl
+        contact,
+        address,
+        medicalInformation,
+        identification,
+        insuranceInformation,
+        nextOfKin,
+        profilePhoto:imageUrl
 
     })
 

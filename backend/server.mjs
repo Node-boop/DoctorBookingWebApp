@@ -11,12 +11,17 @@ import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerSpec from './utils/swagger.mjs'
 import OpenAI from 'openai'
 import swaggerUi from 'swagger-ui-express'
+import session from 'express-session'
 const app = express()
 
 connectMongoDB()
 connectV2()
 app.use(cors())
 app.use(express.json())
+
+app.use(session({
+   
+}))
 
 app.use(routes)
 

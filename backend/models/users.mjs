@@ -62,6 +62,10 @@ const userSchema = new mongoose.Schema({
     updatedAt:{
         type:Number,
         default:new Date
+    },
+    cartData:{
+        type:Object,
+        
     }
     
 
