@@ -5,14 +5,9 @@ import jwt from 'jsonwebtoken'
 
 const router = Router()
 
-const generateAdminToken = (email,password)=>{
-    const token = jwt.sign({email+password},process.env.JWT_SECRET_KEY,{expiresIn:'1h'})
-
-    return token
-
-}
 
 
+/*
 router.post('/api/user/admin/auth',async(request,response)=>{
 
     const {email,password} = request.body
@@ -29,7 +24,7 @@ router.post('/api/user/admin/auth',async(request,response)=>{
 
 
 })
-
+*/
 
 
 

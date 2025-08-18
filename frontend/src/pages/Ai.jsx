@@ -9,6 +9,7 @@ const Ai = () => {
   const [loading,setLoading] = useState(false)
   const {backendUrl,token,navigate} = useContext(ShopContext)
   const [user,setUser] = useState([])
+  const [errorMessage,setErrorMessage] = useState('')
   const location = useLocation()
 
   useEffect(()=>{
@@ -45,7 +46,9 @@ const Ai = () => {
   },[token])
 
   const onSubmitHandler = async(e)=>{
-    e.preventDefault()
+    try{
+      setLoading(true)
+      e.preventDefault()
     if(!token)
       navigate('/auth0')
     
@@ -60,7 +63,17 @@ const Ai = () => {
      
     }
     else{
-      toast.error(response.data.message)
+      //toast.error(response.data.message)
+      setLoading(false)
+      setErrorMessage(response.data.message)
+    }
+    }
+    catch(error)
+    {
+      //toast.error(response.data.message)
+      setErrorMessage(response.data.message)
+    }
+    finally{
       setLoading(false)
     }
   }
@@ -76,20 +89,24 @@ const Ai = () => {
               <button type='submit' className='border border-gray-300 bg-white px-3 py-2'>send</button>
           </div>
 
-          <div>
-            <p className='text-4xl'>+</p>
+          <div className="flex justify-between mt-4">
+            <i className="fa fa-plus"></i>
+
+            <i className="fa fa-microphone text-slate-700"></i>
           </div>
         </form>
 
         <div className='mb-10 text-start justify-start'>
 
           {
-            loading && !aiResponse ? <p>Loading...</p> : ''
+            loading ? <p>Just a Second<span className="dots">.....</span></p> : ''
           }
 
           {
-            aiResponse ? <p>{aiResponse}</p> : <p className={`${loading ? 'hidden' : 'block'}`}>Hello {user.firstName}</p>
+            aiResponse || errorMessage ? <div className="text-sm text-center justify-center text-slate-700 flex-wrap break-normal"><p >{aiResponse}</p><p className="break-normal flex-wrap">{errorMessage}</p></div> : <p className={`${loading ? 'hidden' : 'block text-sky-600 font-bold text-xl'}`}>Hello {user.firstName}</p>
           }
+
+
 
           <div>
             
@@ -98,6 +115,8 @@ const Ai = () => {
           
         </div>
       </div>
+
+      
   </div>
   )
 }

@@ -6,7 +6,7 @@ import search_icon from '../assets/search.png'
 
 const Header = () => {
 
-    const {navigate,token,setToken,showAccountMenu,setShowAccountMenu} = useContext(ShopContext)
+    const {navigate,token,setToken,showAccountMenu,setShowAccountMenu,showSearch,setShowSearch} = useContext(ShopContext)
 
 
     const logout = ()=>{
@@ -17,7 +17,7 @@ const Header = () => {
     
     
   return (
-    <div className='flex mt-3 w-full sticky mx-auto shadow-[8px_8px_16px_#bebebe,-8px_-8px_16px_#ffffff] hover:animate-pulse  rounded-full justify-between px-5 py-5 bg-white lg:justify-between sm:justify-center max-sm:justify-center md:justify-between max-md:justify-between '>
+    <div className='flex mt-3 w-full sticky mx-auto shadow-[8px_8px_16px_#bebebe,-8px_-8px_16px_#ffffff]   rounded-full justify-between px-5 py-5 bg-white lg:justify-between sm:justify-center max-sm:justify-center md:justify-between max-md:justify-between '>
 
         <div className='flex'>
             <h1 className='font-extrabold font-mono text-slate-600 text-2xl'>Meddicure</h1>
@@ -78,8 +78,8 @@ const Header = () => {
             </div>
 
         </div> : <div className='flex gap-4'>
-             <div className='lg:flex sm:hidden max-sm:hidden md:hidden max-md:hidden'>
-                <img src={search_icon} className='w-8 cursor-pointer' alt="" />
+             <div  className='lg:flex sm:hidden max-sm:hidden md:hidden max-md:hidden'>
+                <img onClick={()=>setShowSearch(!showSearch)} src={search_icon} className='w-8 cursor-pointer' alt="" />
             </div>
             <div className='lg:flex sm:hidden max-sm:hidden md:hidden max-md:hidden'>
                 <button onClick={()=>navigate('/auth0')} className='bg-white shadow cursor-pointer px-5 py-1.5 rounded-full font-light font-mono m-0'>Login / Signup</button>

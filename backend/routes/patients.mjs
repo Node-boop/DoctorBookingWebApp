@@ -65,7 +65,7 @@ export const generateJwtToken = (payload)=>{
  *       
  */
 
-router.post('/api/user/register',body(),checkSchema(registerValidator),async(request,response)=>{
+router.post('/api/users/register',body(),checkSchema(registerValidator),async(request,response)=>{
     try {
         const {firstName,lastName,email,gender,password} = request.body // access your values from the request body
 
@@ -159,7 +159,7 @@ router.post('/api/user/register',body(),checkSchema(registerValidator),async(req
  *               $ref: '#/components/schemas/LoginError'
  *     
  */
-router.post('/api/user/auth',checkSchema(loginValidator),async(request,response)=>{
+router.post('/api/users/auth',checkSchema(loginValidator),async(request,response)=>{
     try {
         const result = validationResult(request) // catching all validation error from express-validator
 
@@ -224,7 +224,7 @@ router.get('/api/google/callback',passport.authenticate('google',{failureMessage
 
 /***Profile setting routes  */
 
-router.post('/api/user/patient-profile',userMiddleware,upload.fields([{name:'avator',maxCount:1}]),async(request,response)=>{
+router.post('/api/users/patient-profile',userMiddleware,upload.fields([{name:'avator',maxCount:1}]),async(request,response)=>{
 
     const {contact,address,nextOfKin,title,medicalInformation,identification,insuranceInformation,} = request.body // getting user input from the requestbody
     const userId = request.user.payload.id
@@ -363,7 +363,7 @@ const sendVerificationEmail = (to,from)=>{
  */
 
 
-router.post('/api/user/send-verification-email',userMiddleware,async(request,response)=>{
+router.post('/api/users/send-verification-email',userMiddleware,async(request,response)=>{
    try {
     const userId = request.user.payload.id
     const user = User.findById(userId)
@@ -439,7 +439,7 @@ router.post('/api/user/send-verification-email',userMiddleware,async(request,res
  */
 
 
-router.post('/api/user/appointment-booking',[body('userSlot').isObject().withMessage("Field must be a valid object"),
+router.post('/api/users/appointment-booking',[body('userSlot').isObject().withMessage("Field must be a valid object"),
     body('doctorID').isString().withMessage('Field must be of data type string'),
     body('reason').isString().withMessage("reason field must be a valid data type of string")
 ],userMiddleware,async(request,response)=>{
@@ -577,6 +577,30 @@ router.get('/api/users/profile',userMiddleware,async(request,response)=>{
 
 })
 
+
+// route to check verification status of a user
+// this is from a booloean state that returns true if user is verified
+
+router.get('/api/users/verification/status',userMiddleware,async(request,response)=>{
+    try {
+        const userID = request.user.payload.id
+
+        if(!request.user)
+            return response.json({success:false,message:"Not Authenticated"})
+
+
+        const user =await User.findById(userID)
+        if(!user)
+            return response.json({success:false,message:"User Not Found or Not Authenticated"})
+
+        return response.json({succes:true,isVerified:user.isVerified})
+    } catch (error) {
+        console.log(error.message)
+        return response.json({sucess:false,message:error.message})
+        
+    }
+})
+
 // doctor reviews
 
 /** * @swagger
@@ -612,7 +636,7 @@ router.get('/api/users/profile',userMiddleware,async(request,response)=>{
  *                   type: string
  *                   example: Review submitted successfully.
  */
-router.post('/api/user/doctor-review',userMiddleware,async(request,response)=>{
+router.post('/api/users/doctor-review',userMiddleware,async(request,response)=>{
     // This route allows a user to submit a review for a doctor.
     // It expects the request body to contain the doctor's ID and the review text.
     // The user must be authenticated to access this route, enforced by the userMiddleware.
@@ -642,6 +666,16 @@ router.post('/api/user/doctor-review',userMiddleware,async(request,response)=>{
         return response.status(500).json({success:false,message:error.message})
         
     }
-})
+});
+
+// Route to get all reviews for a specific doctor
+// This route retrieves all reviews for a specific doctor based on the doctor's ID.
+// It checks if the doctor ID is provided in the request parameters.
+// If the doctor ID is not provided, it returns a 400 Bad Request status.
+// If the doctor ID is provided, it queries the database for reviews associated with that doctor.
+// If reviews are found, it returns a 200 OK status with the reviews data.
+// If no reviews are found, it returns a 404 Not Found status with a message indicating
+
+
 
 export default router

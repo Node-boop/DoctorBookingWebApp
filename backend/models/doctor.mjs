@@ -35,6 +35,10 @@ const doctorSchema = new mongoose.Schema({
         enum:['Male','Femal','Other'],
         required:true,
     },
+    image:{
+        type:Array,
+        required:true
+    },
     passwordResetToken:{
         type:String
     },

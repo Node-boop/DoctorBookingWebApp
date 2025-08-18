@@ -34,7 +34,8 @@ const AuthPage = () => {
             setToken(response.data.token)
             localStorage.setItem('token',response.data.token)
             toast.success('Login Success')
-            navigate('/')
+            navigate(window.history.back() || '/') // Redirect to Home or previous page
+            setCurrentState('Login') // Reset to Login state after successful login
           }
           else{
             toast.error(response.data.message)
@@ -51,7 +52,7 @@ const AuthPage = () => {
           if(resp.data.success){
             toast.success(resp.data.message)
             setToken(resp.data.token)
-            navigate('/profile')
+            navigate('/create-profile')
           }
           else
           {

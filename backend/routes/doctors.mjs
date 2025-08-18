@@ -66,7 +66,7 @@ export const generateJwtToken = (payload)=>{
  */
 
 
-router.post('/api/user/doctor/register',[body()],checkSchema(registerValidator),async(request,response)=>{
+router.post('/api/user/doctor/register',[body()],upload.fields([{name:'image1',maxCount:1},{name:'image2',maxCount:1},{name:'image3',maxCount:1},{name:'image4',maxCount:1}]),checkSchema(registerValidator),async(request,response)=>{
     try {
         const {firstName,lastName,email,password,gender
 
@@ -84,6 +84,20 @@ router.post('/api/user/doctor/register',[body()],checkSchema(registerValidator),
         {
             return response.status(409).json({succes:false,message:"User already exists"})
         }
+
+        const image1 = request.files.image1 && request.files.image1[0]
+        const image2 = request.files.image2 && request.files.image2[0]
+        const image3 = request.files.image3 && request.files.image3[0]
+        const image4 = request.files.image4 && request.files.image4[0]
+
+        const images = [image1,image2,image2,image3,image4].filter((image)=> image !== undefined)
+
+        const imageUrl = await Promise.all(
+            images.map(async(image)=>{
+                let result = await cloudinary.uploader.upload(image.path,{resource_type:'image'})
+                return result.secure_url
+            })
+        )
        
         const salt = bcrypt.genSaltSync(10) // Generate dalt rounds to hash the password
 
@@ -99,7 +113,8 @@ router.post('/api/user/doctor/register',[body()],checkSchema(registerValidator),
             email:data.email,
             gender:data.gender,
             role:'doctor',
-            password:data.password
+            password:data.password,
+            image:imageUrl
         })
         newUser.status = 'Pending'
         await newUser.save()
@@ -337,6 +352,32 @@ router.post('/api/user/doctor/profile',doctorMiddleware,upload.fields([{name:'im
     return response.json({success:true, userProfile:newProfile})
     
 })
+
+
+router.post('/api/doctors/search',async(request,response)=>{
+   try {
+    const query = request.query.query
+    // query and match multiple fileds of the search
+    const queryResult = Doctor.find({
+        $or:[
+            {firstName:{$regex: query, $options:'i'}},
+            {lastName: {$regex: query, $options: 'i'}}
+        ]
+    })
+
+    console.log(queryResult)
+
+    return response.json({success:true,results:queryResult})
+
+   } catch (error) {
+        console.log(error.message)
+        return response.json({success:false,message:error.message})
+    
+   }
+
+
+})
+
 
 
 router.post('/api/user/doctor/verify',userMiddleware,async(request,response)=>{

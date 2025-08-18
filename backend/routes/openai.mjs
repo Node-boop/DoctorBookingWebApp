@@ -5,7 +5,7 @@ import OpenAI from "openai";
 const router = Router()
 
 const openai = new OpenAI({
-    apiKey:process.env.OPEN_AIKEY
+    apiKey:process.env.OPEN_KEY
 })
 
 router.post('/api/ai-assistant',async(request,response)=>{
@@ -14,8 +14,13 @@ router.post('/api/ai-assistant',async(request,response)=>{
      console.log(userMessage)
 
     const chatCompletions = await openai.chat.completions.create({
-        model:'gpt-4o',
-        messages: [{ role: "user", content: userMessage}],
+        model:'gpt-4.1',
+        messages: [{ role: "user", content: userMessage},
+                    {role:'system',content: "You are a helpfull agent"}],
+
+
+                    temparature:0.7,
+                    maxTokens:150
     })
 
     if(!chatCompletions)
@@ -25,6 +30,7 @@ router.post('/api/ai-assistant',async(request,response)=>{
     return response.json({sucess:true,chatResponse})
     console.log(chatResponse)
    } catch (error) {
+    
     console.log(error)
     return response.json({success:false,message:error.message})
 

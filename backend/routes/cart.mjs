@@ -61,7 +61,7 @@ const router = Router();
  *              $ref: '#/components/schemas/AddToCartError'
  */ 
 router.get("/api/user/cart",userMiddleware,async(request, response) => {
-    const userId = request.user.id; // Assuming user ID is stored in the request object by middleware
+    const userId = request.user.payload.id; // Assuming user ID is stored in the request object by middleware
     if (!userId) {
         return response.status(401).json({ error: "Unauthorized" });
     }
@@ -137,21 +137,21 @@ router.post("/api/user/cart/add",userMiddleware, async(request, response) => {
         return response.status(404).json({ error: "User not found" });
     }   
     if (!userId || !productId || !quantity) {
-        return res.status(400).json({ error: "Missing required fields" });
+        return response.status(400).json({ error: "Missing required fields" });
     }
     if (typeof quantity !== 'number' || quantity <= 0) {
-        return res.status(400).json({ error: "Quantity must be a positive number" });
+        return response.status(400).json({ error: "Quantity must be a positive number" });
     }
 
-    if (!req.user || req.user.id !== userId) {
-        return res.status(403).json({ error: "Unauthorized action" });
+    if (!request.user || request.user.payload.id !== userId) {
+        return response.status(403).json({ error: "Unauthorized action" });
     }
     // Here you would typically check if the product exists in the database
     // and if the user has permission to add it to their cart.
 
     const exists = await pharmacy.findById(productId);
     if (!exists) {
-        return res.status(404).json({ error: "Product not found" });
+        return response.status(404).json({ error: "Product not found" });
     }
     // Assuming the product exists, you would add it to the user's cart.
     if (!user.cartData) {
@@ -163,7 +163,7 @@ router.post("/api/user/cart/add",userMiddleware, async(request, response) => {
     } else {
         user.cartData.push({ productId, quantity }); // Add new product to cart
     }
-    user.updatedAt = new Date().getTime();
+    user.updatedAt = new Date;
     await user.save(); // Save the updated user document
 
 
