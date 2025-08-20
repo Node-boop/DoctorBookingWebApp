@@ -23,7 +23,7 @@ const doctorSchema = new mongoose.Schema({
     password:{
         type:String,
         reqruied:true,
-        select:false
+        
     },
     role:{
         type:String,
@@ -32,7 +32,7 @@ const doctorSchema = new mongoose.Schema({
     },
     gender:{
         type:String,
-        enum:['Male','Femal','Other'],
+        enum:['male','female','other'],
         required:true,
     },
     image:{

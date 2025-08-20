@@ -14,6 +14,7 @@ import userMiddleware from "../middleware/userMiddleware.mjs";
 import Doctor from "../models/doctor.mjs";
 import doctorModel from "../models/doctorModel.mjs";
 import doctorSchedule from "../models/doctor-schedules.mjs";
+
 const router = Router()
 
 
@@ -30,7 +31,7 @@ export const generateJwtToken = (payload)=>{
 
 /**
  * @swagger
- * /api/user/doctor/register:
+ * /api/users/doctor/register:
  *   post:
  *     summary: User with doctor abilities registration
  *     tags: [Authentication]
@@ -66,17 +67,19 @@ export const generateJwtToken = (payload)=>{
  */
 
 
-router.post('/api/user/doctor/register',[body()],upload.fields([{name:'image1',maxCount:1},{name:'image2',maxCount:1},{name:'image3',maxCount:1},{name:'image4',maxCount:1}]),checkSchema(registerValidator),async(request,response)=>{
+router.post('/api/users/doctor/register',[body()],upload.fields([{name:'image1',maxCount:1},{name:'image2',maxCount:1},{name:'image3',maxCount:1},{name:'image4',maxCount:1}]),async(request,response)=>{
     try {
-        const {firstName,lastName,email,password,gender
+        const {firstName,lastName,email,gender,password} = request.body // access your values from the request body
 
-        } = request.body // access your values from the request body
+        console.log(request.body)
+        
 
         const result = validationResult(request) // use validator to catch any validation errors from your schema
 
         if(!result.isEmpty())
         {
-            return response.status(400).json({succes:false,error:result.array()}) // send response back to the user 
+            console.log(result.array())
+            return response.json({succes:false,error:result.array()}) // send response back to the user 
         }
 
         const user = await Doctor.findOne({email}) // check whether user exists in the database and and throw an error 
@@ -108,16 +111,24 @@ router.post('/api/user/doctor/register',[body()],upload.fields([{name:'image1',m
         data.password = hashedPassword
         console.log(data)
         const newUser = new Doctor({
-            firstName:data.firstName,
-            lastName:data.lastName,
-            email:data.email,
-            gender:data.gender,
+            firstName:firstName,
+            lastName:lastName,
+            email:email,
+            gender:gender,
             role:'doctor',
-            password:data.password,
+            password:hashedPassword,
             image:imageUrl
         })
         newUser.status = 'Pending'
         await newUser.save()
+
+        const payload = {
+            id:newUser._id,
+            role:newUser.role
+        }
+        const token = generateJwtToken(payload)
+
+
         /**************** a model to return filtered data about a user***************** */
         const responseModel = {
             id:newUser._id,
@@ -126,9 +137,9 @@ router.post('/api/user/doctor/register',[body()],upload.fields([{name:'image1',m
             gender:newUser.gender,
             role:newUser.role
         }
-        response.status(201).json({succes:true,user:responseModel})
+        response.status(201).json({success:true,user:responseModel,token:token,message:"Account creation success"})
     } catch (error) {
-        console.log(error)
+        console.log(error.message)
         return response.status(500).json({succes:false,message:error.message}) // catching errors and diplaying them
     }
     
@@ -139,7 +150,7 @@ router.post('/api/user/doctor/register',[body()],upload.fields([{name:'image1',m
 
 /**
  * @swagger
- * /api/user/doctor/auth:
+ * /api/users/doctor/auth:
  *   post:
  *     summary: Authenticate a doctor
  *     tags: [Authentication]
@@ -163,16 +174,18 @@ router.post('/api/user/doctor/register',[body()],upload.fields([{name:'image1',m
  *             schema:
  *               $ref: '#/components/schemas/LoginError'
  */
-router.post('/api/user/doctor/auth',checkSchema(loginValidator),async(request,response)=>{
+router.post('/api/users/doctor/auth',async(request,response)=>{
     try {
         const result = validationResult(request) // catching all validation error from express-validator
 
         if(!result.isEmpty())
         {
-            return response.status(400).json({succes:false,error:result.array()})
+            return response.status(400).json({success:false,error:result.array()})
         }
         const {email,password} = request.body // ACCESSING VALUES FROM  THE REQUEST BODY
+        console.log(request.body)
         const data  = matchedData(request)
+        console.log(data)
         
         console.log(data)
         const user = await Doctor.findOne({email})
@@ -181,19 +194,28 @@ router.post('/api/user/doctor/auth',checkSchema(loginValidator),async(request,re
         //QUERYING USER USING THE EMAIL ID TO CHECK WHETHER THEY EXIST OR NOT 
         if(!user)
         {
-            return response.status(404).json({succes:false,message:"User not found"})
+            return response.json({success:false,message:"User not found"})
         }
         if(user.role !== 'doctor')
             return response.status(403).json({succes:false,message:"Only doctors can log in from this endpoint"})
         
 
         // COMPARING PASSWORDS ENTERED AND THE USER PASSWORD IN OUR DATABASE
-        const passswordMatch = bcrypt.compare(password,user.password)
+        const passswordMatch =await bcrypt.compare(password,user.password)
 
         if(!passswordMatch)
         {
-            return response.status(409).json({succes:false,message:"Invalid email or password"})
+            user.loginAttempts +=1
+            user.lastLoginAttempt = new Date
+            return response.status(409).json({success:false,message:"Invalid email or password"})
         }
+
+        if(user.loginAttempts >= 5)
+        {
+            
+            return response.json({success:false,message:`Too many attempts try in `})
+        }
+
 
         // CREATING PAYLOAD OBJECT TO GENERATE JWT BEARER TOKEN
 
@@ -204,11 +226,11 @@ router.post('/api/user/doctor/auth',checkSchema(loginValidator),async(request,re
 
         const token = generateJwtToken(payload)
 
-        return response.status(200).json({succes:true,token:token,type:'Bearer'})
+        return response.status(200).json({success:true,token:token,type:'Bearer'})
 
     } catch (error) {
         console.log(error)
-        return response.status(500).json({succes:false,errors:error.message})
+        return response.status(500).json({success:false,errors:error.message})
         
         
     }

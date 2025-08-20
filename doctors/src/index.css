@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Times+New+Roman:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&display=swap");
+
+
+@import 'tailwindcss';
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@plugin "daisyui"{
+  themes: all;
+}
+
+.loginPage
+{
+  font-family: "Montserrat",sans-serif;
+
+}
+#header
+{
+  line-height: 60px;
+  font-family: "Poppins",sans-serif;
+}
+#sideBar
+{
+  font-family: "Poppins",sans-serif;
+}
+#head
+{
+  font-family: "Poppins",sans-serif;
+}
+#sideBar a.active
+{
+  background-color: #222;
+  color: #fff;
+}
+#sideBar a.active i{
+  color: #fff;
+}
+#dashboard
+{
+  font-family: "Roboto",sans-serif;
+}

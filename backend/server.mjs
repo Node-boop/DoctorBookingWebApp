@@ -12,6 +12,7 @@ import OpenAI from 'openai'
 import swaggerUi from 'swagger-ui-express'
 import session from 'express-session'
 import http from 'http'
+import BodyParser from 'body-parser'
 
 
 
@@ -26,6 +27,7 @@ connectMongoDB()
 connectV2()
 app.use(cors())
 app.use(express.json())
+
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
