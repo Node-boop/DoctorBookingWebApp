@@ -70,6 +70,7 @@ const Auth = () => {
                         setToken(localStorage.getItem('token'))
                         toast.success("Logged in!")
                         setSuccessMessage(response.data.message)
+                        navigate('/dashboard')
 
                     }else
                     {

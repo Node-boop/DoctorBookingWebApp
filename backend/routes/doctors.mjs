@@ -449,6 +449,19 @@ router.post('/api/user/doctor/verify',userMiddleware,async(request,response)=>{
 })
 // doctor route to create slots for booking
 
+router.get('/api/users/doctors/profile',doctorMiddleware,async(request,response)=>{
+    const userId = request.user.payload.id
+
+    const user = Doctor.findById(userId)
+
+    if(!user)
+    {
+        return response.json({success:false,message:"User not found or unauthenticated"})
+    }
+
+    return response.json({success:true,user:user})
+})
+
 router.post('/api/user/doctor/add-slot',
     [body("slots")
         .isArray()

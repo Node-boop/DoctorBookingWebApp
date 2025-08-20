@@ -6,23 +6,30 @@ const SideBar = () => {
   const [showAppointment,setShowAppointment] = useState(false)
   const [showSchedule,setShowSchedule] = useState(false)
   
-  const {token,setToken,showSidebar,setShowSidebar} = useContext(DoctorContext)
+  const {token,setToken,showSidebar,setShowSidebar,currentPage,setCurrentPage} = useContext(DoctorContext)
 
   return (
-    <div id='sideBar' className='bg-white shadow-md border-r border-gray-300 h-[100vh] px-5 scroll-smooth dark:bg-slate-950'>
+    <div id='sideBar' className='w-[18%] min-h-screen bg-white shadow-md border-r border-gray-300 h-[100vh] px-5 scroll-smooth dark:bg-slate-950'>
       
-      <div className='mt-2'>
-        <input type="text" name="" id="" className='border-2 px-3 py-3 outline-none w-[97%] border-gray-300 rounded-lg' placeholder='Search'/>
+      <div className='hidden mt-2' >
+        <input type="text" name="" id="" className='border-2 px-3 py-3 outline-none w-[97%] border-gray-300 rounded-lg focus:bg-base-300' placeholder='Search'/>
+      </div>
+
+      <div className="mt-3 mb-10">
+        <p className="text-xl text-center font-bold">Meddicure</p>
       </div>
 
       <div className='flex flex-col gap-4 mt-3'>
-
-        <NavLink onClick={()=>setShowSidebar(!showSidebar)} to="/dashboard" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
+        <div onClick={setCurrentPage("Dashboard")}>
+            <NavLink  onClick={()=>setShowSidebar(!showSidebar)} to="/dashboard" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
           <i className='fa fa-home text-slate-600 text-sm'></i>
-          <p className="text-sm">Dashboard</p>
+          <p  className="text-sm">Dashboard</p>
         </NavLink>
+          
+        </div>
+      
 
-        <div>
+        <div onClick ={()=>setCurrentPage("Appointments")}>
           <div onClick={()=>setShowAppointment(!showAppointment)}  className='flex gap-21 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
             <p className="text-sm">Appointments</p>
             <i className={`fa fa-chevron-right text-slate-600 text-sm ${showAppointment ? 'rotate-90' : ''} ${showSchedule ? 'rotate-360' : ''}`}></i>
@@ -45,9 +52,9 @@ const SideBar = () => {
           
         </div>
 
-        <div>
+        <div onClick ={()=>setCurrentPage("Schedules")}>
            <div onClick={()=>setShowSchedule(!showSchedule)}  className='flex gap-30 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
-            <p className="text-sm">shedules</p>
+            <p className="text-sm">schedules</p>
             <i className={`fa fa-chevron-right text-slate-600 text-sm ${showSchedule ? 'rotate-90' : ''} ${showAppointment ? 'rotate-360' : ''}`}></i>
           </div>
 
@@ -69,22 +76,27 @@ const SideBar = () => {
           
         </div>
 
-         <NavLink to="/messages" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
+         <NavLink onClick ={()=>setCurrentPage("Messages")} to="/payments" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
+          <i className='fa fa-wallet text-slate-600 text-sm'></i>
+          <p className="text-sm">Payments</p>
+        </NavLink>
+
+         <NavLink onClick ={()=>setCurrentPage("Messages")} to="/messages" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
           <i className='fa fa-envelope text-slate-600 text-sm'></i>
           <p className="text-sm">Messages</p>
         </NavLink>
 
-         <NavLink to="/comments" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
+         <NavLink onClick ={()=>setCurrentPage("Comments")} to="/comments" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
           <i className='fa fa-comment text-slate-600 text-sm'></i>
           <p className="text-sm">Comments</p>
         </NavLink>
 
-         <NavLink to="/reviews" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
+         <NavLink onClick ={()=>setCurrentPage("Ratings")} to="/reviews" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
           <i className='fa fa-star text-slate-600 text-sm'></i>
           <p className="text-sm">Ratings</p>
         </NavLink>
 
-         <NavLink to="/statistics" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
+         <NavLink onClick ={()=>setCurrentPage("Statistics")} to="/statistics" className='flex gap-1 h-[40px] rounded-lg justify-start px-4 cursor-pointer items-center hover:bg-base-300 '>
           <i className="fas fa-chart-pie" aria-hidden="true"></i>
           <p className="text-sm">Stats</p>
         </NavLink>
@@ -92,9 +104,10 @@ const SideBar = () => {
 
         <div className="flex px-4">
           <label className="flex cursor-pointer gap-2">
+             <span className="label-text"><i className="fa fa-moon"></i></span>
          
-          <input type="checkbox" value="forest" className="toggle theme-controller" />
-          <span className="label-text">Dark</span>
+          <input type="checkbox" value="light" className="toggle theme-controller" />
+          <span className="label-text"><i className="fa fa-sun"></i></span>
         </label>
           
         </div>

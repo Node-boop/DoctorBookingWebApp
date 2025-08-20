@@ -8,8 +8,9 @@ export const DoctorContext = createContext()
 const DoctorContextProvider = (props)=>{
     const [token,setToken] = useState('')
     const backendURL = 'http://localhost:5500'
-    const naigate  = useNavigate()
-    const [showSidebar,setShowSidebar] = useState(true)
+    const navigate  = useNavigate()
+    const [showSidebar,setShowSidebar] = useState(false)
+    const [currentPage,setCurrentPage] = useState('')
 
 
     useEffect(()=>{
@@ -22,7 +23,7 @@ const DoctorContextProvider = (props)=>{
 
 
 
-    const values = {backendURL,token,setToken,naigate,showSidebar,setShowSidebar}
+    const values = {backendURL,token,setToken,navigate,showSidebar,setShowSidebar,currentPage,setCurrentPage}
 
 
 

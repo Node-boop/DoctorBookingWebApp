@@ -1,9 +1,10 @@
-import React, { useContext } from 'react'
+import React, { useContext,useState } from 'react'
 import { DoctorContext } from '../context/DoctorContext'
 
 const Header = () => {
 
-  const {token,setToken,showSidebar,setShowSidebar} = useContext(DoctorContext)
+  const {token,setToken,showSidebar,setShowSidebar,navigate,currentPage,setCurrentPage} = useContext(DoctorContext)
+  
 
   const logout = ()=>{
     setToken('')
@@ -11,12 +12,13 @@ const Header = () => {
   }
   return (
     <div id='head'>
-      <div className="navbar bg-base-100 shadow-sm">
-        <div onClick={()=>setShowSidebar(!showSidebar)} className='lg:hidden'>
+      <div className="navbar bg-base-100  px-5">
+        <div id="menuButton" onClick={()=>setShowSidebar(!showSidebar)} className=''>
           <i className='fa fa-list'></i>
         </div>
-        <div className="flex-1 max-sm:text-center">
-          <a className="btn btn-ghost text-xl">Meddicure</a>
+        <div className="flex-1 text-center">
+         <input className="py-2 px-3 border-2 border-gray-300 outline-none rounded-full dark:text-white" type="text" placeholder="search"/>
+
         </div>
         <div className="flex gap-2">
          
@@ -42,7 +44,7 @@ const Header = () => {
             <ul
               tabIndex={0}
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-              <li>
+              <li onClick={()=>navigate('/profile')}>
                 <a className="justify-between">
                   Profile
                   <span className="badge">New</span>

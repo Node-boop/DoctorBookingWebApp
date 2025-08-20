@@ -17,7 +17,7 @@ function App() {
   const {token,setToken,showSidebar,setShowSidebar} = useContext(DoctorContext)
 
   return (
-    <div>
+    <div className="min-h-screen">
        <ToastContainer />
 
       {
@@ -26,26 +26,31 @@ function App() {
         </Routes> : 
         
         
-        <div>
-          <Header />
+        <>
+          
          
+          
+          <div className="flex w-full">
 
-          <div className={`w-[18%] max-sm:w-[100%] ${showSidebar ? 'right-0 bottom-0 overflow-hidden transition-all duration-500' : 'hidden'}`}>
             <SideBar/>
 
-          </div>
-          <div className='w-[80%] mx-auto'>
+          
+              <div className={`w-[70%] mx-auto ml-[max(5vw,25px)] my-2  ${!showSidebar ? 'w-[100%]' : 'w-[80%]'}`} >
+                <Header />
+                <Routes>
+                <Route path='/profile' element={<Profile/>}/>
+                <Route path='/dashboard'  element={<Dashboard/>}/>
 
-            <Routes>
-            <Route path='/profile' element={<Profile/>}/>
-            <Route path='/dashboard'  element={<Dashboard/>}/>
+                </Routes>
 
-            </Routes>
-
+              </div>
+            
           </div>
           
+            
+          
 
-        </div>
+        </>
       }
 
 
