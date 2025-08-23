@@ -9,14 +9,31 @@ const SideBar = () => {
   const {token,setToken,showSidebar,setShowSidebar,currentPage,setCurrentPage} = useContext(DoctorContext)
 
   return (
-    <div id='sideBar' className='w-[18%] min-h-screen bg-white shadow-md border-r border-gray-300 h-[100vh] px-5 scroll-smooth dark:bg-slate-950'>
+    <div id='sideBar' className={`w-[18%] min-h-screen top-0 bg-white shadow-md absolute border-r- border-gray-300 h-[100vh] px-5 scroll-smooth dark:bg-slate-950 max-sm:w-[80%] ${showSidebar ? 'block transition-all duration-500' : 'hidden'}`}>
       
       <div className='hidden mt-2' >
         <input type="text" name="" id="" className='border-2 px-3 py-3 outline-none w-[97%] border-gray-300 rounded-lg focus:bg-base-300' placeholder='Search'/>
       </div>
 
-      <div className="mt-3 mb-10">
+      <div className="hidden flex gap-1 items-center justify-end mt-3 mr-3 hover:text-dark">
+
+        <div className="flex gap-1 items-center bg-base-300 px-4 py-2 ">
+          <i className="fa fa-arrow-left"></i>
+        <p>Back</p>
+          
+        </div>
+        
+        
+      </div>
+
+      <div className="flex justify-between mt-3 mb-10 ">
         <p className="text-xl text-center font-bold">Meddicure</p>
+
+        <div onClick={()=>setShowSidebar(false)} className="flex gap-1 items-center bg-base-300 px-4 py-2 text-xs rounded-lg cursor-pointer">
+          <i className="fa fa-arrow-left"></i>
+        <p>Back</p>
+          
+        </div>
       </div>
 
       <div className='flex flex-col gap-4 mt-3'>
@@ -106,7 +123,7 @@ const SideBar = () => {
           <label className="flex cursor-pointer gap-2">
              <span className="label-text"><i className="fa fa-moon"></i></span>
          
-          <input type="checkbox" value="light" className="toggle theme-controller" />
+          <input type="checkbox" value="dark" className="toggle theme-controller" />
           <span className="label-text"><i className="fa fa-sun"></i></span>
         </label>
           

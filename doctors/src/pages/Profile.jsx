@@ -12,6 +12,9 @@ const Profile = () => {
   const [loading,setLoading] = useState(false)
   const [successMessage,setSuccessMessage] = useState('')
 
+  
+
+
   const fetchUserProfile = async()=>{
 
     try{
@@ -48,7 +51,7 @@ const Profile = () => {
   },[token])
 
   return (
-    <div>Profile</div>
+    <div></div>
   )
 }
 

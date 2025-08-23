@@ -10,6 +10,7 @@ const AuthPage = () => {
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
   const [gender,setGender] = useState('')
+  const [loading,setLoading] = useState(false)
 
   const [repeatPassword,setRepeatPassword] = useState('')
 
@@ -25,7 +26,8 @@ const AuthPage = () => {
 
       switch (currentState) {
         case 'Login':
-          const response = await axios.post(backendUrl + '/api/user/auth',{email,password},{headers:{
+          setLoading(true)
+          const response = await axios.post(backendUrl + '/api/users/auth',{email,password},{headers:{
             "Content-Type":"application/json"
           }})
 
@@ -34,7 +36,8 @@ const AuthPage = () => {
             setToken(response.data.token)
             localStorage.setItem('token',response.data.token)
             toast.success('Login Success')
-            navigate(window.history.back() || '/') // Redirect to Home or previous page
+            const prevUrl = window.history.back()
+            prevUrl !== '/auth0' ? navigate(prevUrl) : navigate('/')/// Redirect to Home or previous page
             setCurrentState('Login') // Reset to Login state after successful login
           }
           else{
@@ -46,11 +49,13 @@ const AuthPage = () => {
           
           break;
         case 'Signup':
+          setLoading(true)
           if (password !== repeatPassword)
             toast.error("Passwords do not match")
-          const resp = await axios.post(backendUrl + '/api/user/register',{firstName,lastName,gender,email,password})
+          const resp = await axios.post(backendUrl + '/api/users/register',{firstName,lastName,gender,email,password})
           if(resp.data.success){
             toast.success(resp.data.message)
+            localStorage.setItem('token',resp.data.token)
             setToken(resp.data.token)
             navigate('/create-profile')
           }
@@ -73,9 +78,16 @@ const AuthPage = () => {
       toast.error(error.message)
       
     }
+    finally{
+      setLoading(false)
+    }
   }
   return (
     <div className='flex flex-col items-center justify-center justify-self-center mb-15'>
+       
+       <div className="hidden alert alert-success mt-5">
+          <span>Message sent successfully.</span>
+      </div>
 
       
       <div className='max-w-[500px] border- px-5 py-3 mt-5 border-gray-300 bg-white shadow mb-10'>
@@ -87,7 +99,7 @@ const AuthPage = () => {
 
         
           
-           <p onClick={()=>setCurrentState('Login')} className={`text-center cursor-pointer text-white text-sm font-mono bg-sky-700 rounded-full shadow px-5 py-1`}>Login</p>
+           <p onClick={()=>setCurrentState('Login')} className={`text-center cursor-pointer text-white text-sm font-mono bg-primary rounded-full shadow px-5 py-1`}>Login</p>
            <p onClick={()=>setCurrentState('Signup')} className={`text-center text-slate-700 text-sm font-mono bg-white cursor-pointer rounded-full shadow px-5 py-1`}>Signup</p>
         
         
@@ -101,7 +113,7 @@ const AuthPage = () => {
         
           
            <p onClick={()=>setCurrentState('Login')} className={`text-center text-slate-700 text-sm font-mono bg-white cursor-pointer rounded-full shadow px-5 py-1`}>Login</p>
-           <p onClick={()=>setCurrentState('Signup')} className={`text-center text-sm font-mono bg-sky-700 text-white cursor-pointer rounded-full shadow px-5 py-1`}>Signup</p>
+           <p onClick={()=>setCurrentState('Signup')} className={`text-center text-sm font-mono bg-primary text-white cursor-pointer rounded-full shadow px-5 py-1`}>Signup</p>
         
         
         </div> : 
@@ -195,13 +207,16 @@ const AuthPage = () => {
           
 
           <div>
+            
             {
-              currentState === 'Login' ? <button type='submit' className='text-sm text-white cursor-pointer bg-sky-700 rounded-full w-full py-2 font-mono '>{currentState}</button> : ''
+              loading ?  <button className='btn btn-primary rounded-2xl w-full' type='submit' disabled>please wait..<span className='loading loading-spinner'></span></button> :
+               <button type='submit' className='text-sm text-white cursor-pointer bg-primary rounded-full w-full py-2 font-mono '>{currentState}</button>
             }
 
-            {
-              currentState === 'Signup' ? <button type='submit' className='text-sm text-white cursor-pointer bg-sky-700 rounded-full w-full py-2 font-mono'>{currentState}</button> : ''
-            }
+               
+            
+
+           
           </div>
 
           <div className={`flex justify-between mt-2 cursor-pointer ${currentState === 'Signup' ? 'hidden' : 'block'}`}>

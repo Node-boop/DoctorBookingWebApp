@@ -20,6 +20,39 @@ const ShopContextProvider = (props)=>{
      const [showSearch,setShowSearch] = useState(true)
      const backendUrl = 'http://localhost:5500'
 
+    //const [doctors,setDoctors] = useState([])
+    const [loading,setLoading] = useState(false)
+
+
+  const fetchDoctors = async()=>{
+
+    try{
+      setLoading(true)
+      const response = await axios.get(backendUrl + '/api/super/list-doctors',{})
+
+      if(response.data.success)
+      {
+        setDoctors(response.data.users)
+      }
+      else
+      {
+        toast.error(response.data.message)
+      }
+
+    }catch(error){
+      console.log(error.message)
+      toast.error(error.message)
+
+    }finally{
+      setLoading(false)
+
+    }
+
+  }
+  useEffect(()=>{
+    fetchDoctors()
+  },[doctors])
+
     
 
     useEffect(()=>{
@@ -86,6 +119,7 @@ const ShopContextProvider = (props)=>{
         
        }
     }
+    /*
     const fetchDoctors = async () => {
         try {
             const response = await fetch(`${backendUrl}/api/doctors/list`, {
@@ -107,8 +141,10 @@ const ShopContextProvider = (props)=>{
             console.error('Error fetching doctors:', error);
         }
     };
+    */
     const value = {
-        token,navigate,backendUrl,setToken,showAccountMenu,setShowAccountMenu,handleSearch,searchQuery,setSearchQuery,searchResults,setSearchResults,searchLoading,setSearchLoading,doctors,setDoctors,fetchDoctors,showHeader,setShowHeader,showSearch,setShowSearch
+        token,navigate,backendUrl,setToken,showAccountMenu,setShowAccountMenu,handleSearch,searchQuery,setSearchQuery,searchResults,setSearchResults,searchLoading,setSearchLoading
+        ,doctors,setDoctors,fetchDoctors,showHeader,setShowHeader,showSearch,setShowSearch
     }
 
     return(

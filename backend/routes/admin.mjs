@@ -56,10 +56,10 @@ router.get('/api/super/list-users',async(request,response)=>{
         const users = await User.find({})
         if(!users)
         {
-            return response.status(404).json({succes:false,error:"No users retrieved"})
+            return response.status(404).json({success:false,error:"No users retrieved"})
         }
 
-        return response.status(200).json({succes:true,users:users})
+        return response.status(200).json({success:true,users:users})
     } catch (error) {
         
     }
@@ -94,10 +94,10 @@ router.get('/api/super/list-doctors',async(request,response)=>{
         const users = await Doctor.find({})
         if(!users)
         {
-            return response.status(404).json({succes:false,error:"No users retrieved"})
+            return response.status(404).json({success:false,error:"No users retrieved"})
         }
 
-        return response.status(200).json({succes:true,users:users})
+        return response.status(200).json({success:true,users:users})
     } catch (error) {
         
     }

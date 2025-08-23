@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { ShopContext } from '../context/ShopContext'; // Adjust the import path as necessary
 import { NavLink,Link } from 'react-router-dom';
 
-const Card = (props) => {
+const Card = ({firtName,lastName,image}) => {
     // You can pass props to customize the card if needed
     // For example, you can pass doctor details as props
     // const { name, rating, specialization, location, experience } = props;
@@ -14,9 +14,23 @@ const Card = (props) => {
   return (
     <div className="bg-white shadow-[8px_8px_16px_#bebebe,-8px_-8px_16px_#ffffff] rounded-lg p-4">
       <div className="flex flex-col items-center">
-        <img src={doc_image} alt="Doctor" className="w-24 h-24 rounded-full mb-4" />
-        <h3 className="text-lg font-semibold text-slate-900">Dr. John Doe</h3>
-        <p className="text-sm text-slate-600">Rating: 4.5/5</p>
+       <div className="avatar">
+          <div className="ring-normal ring-offset-base-100 w-24 rounded-full ring-2 ring-offset-2">
+            <img src={image} />
+          </div>
+        </div>
+        <h3 className="text-lg font-semibold text-slate-900">Dr. {firtName} {lastName}</h3>
+        <div className="">
+             <div className="rating">
+              <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" aria-label="1 star" />
+              <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" aria-label="2 star" defaultChecked />
+              <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" aria-label="3 star" />
+              <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" aria-label="4 star" />
+              <input type="radio" name="rating-2" className="mask mask-star-2 bg-orange-400" aria-label="5 star" />
+        </div>
+            
+        </div>
+       
         <p className="text-sm text-slate-600">Specialization: Dentist</p>
         <p className="text-sm text-slate-600">Location: Nairobi</p>
         <p className="text-sm text-slate-600">Experience: 10 years</p>
@@ -28,7 +42,7 @@ const Card = (props) => {
             pathname: '/doctor-detail',
             search: `?id=69odien4992kj3j2i&name=Dr. John Doe&specialization=Dentist&location=Nairobi&experience=10 years`
         }}>
-            <button onClick={() => navigate('/doctor-detail')} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-2xl text-sm hover:bg-blue-600 transition-colors">
+            <button onClick={() => navigate('/doctor-detail')} className="mt-4 bg-primary text-white px-4 py-2 rounded-2xl text-sm hover:bg-blue-600 transition-colors">
                 View Profile
             </button>
         </NavLink>

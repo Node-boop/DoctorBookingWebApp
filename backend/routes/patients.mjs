@@ -79,7 +79,7 @@ router.post('/api/users/register',body(),checkSchema(registerValidator),async(re
         const user = await User.findOne({email}) // check whether user exists in the database and and throw an error 
         if(user)
         {
-            return response.status(409).json({succes:false,message:"User already exists"})
+            return response.json({success:false,message:"User already exists"})
         }
         /*
         if(password !== password2) // compare passwords after thay are sent and return a response

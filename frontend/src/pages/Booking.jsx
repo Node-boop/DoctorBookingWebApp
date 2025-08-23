@@ -1,10 +1,13 @@
-import React, { useContext } from 'react'
+import React, { useContext,useState } from 'react'
 import Search from '../components/Search'
 import Card from '../components/Card'
 import { ShopContext } from '../context/ShopContext'
+import axios from 'axios'
 
 const Booking = () => {
-  const {showSearch,setShowSearch} = useContext(ShopContext)
+  const {showSearch,setShowSearch,backendUrl,doctors} = useContext(ShopContext)
+
+
   return (
     <div className='flex justify-between mt-4' id='booking'>
 
@@ -129,10 +132,24 @@ const Booking = () => {
           <Search />
         </div>
 
-        <div className='grid grid-cols-2 gap-4 mt-4 lg:grid-cols-4 md:grid-cols-1 sm:grid-cols-2 max-sm:grid-cols-2'>
-          <div className='flex justify-center'>
-            <Card />  
-          </div>
+        <div className="flex items-center justify-center mt-5 font-bold underline text-primary">
+          <p>All Doctors</p>
+          
+        </div>
+
+        <div className='grid grid-cols-2 gap-4 mt-4 lg:grid-cols-6 md:grid-cols-1 sm:grid-cols-2 max-sm:grid-cols-2'>
+          
+          {
+            doctors.map((doctor,index)=>(
+
+              <div key={index}  className='flex justify-center'>
+                <Card lastName={doctor.lastName} firstName={doctor.firstName} image = {doctor.image[0]} />  
+              </div>
+
+
+              ))
+          }
+          
           
         </div>
         

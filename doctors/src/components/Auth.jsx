@@ -134,7 +134,7 @@ const Auth = () => {
     
   return (
     <div className='loginPage dark:text-white'>
-    <header id='header' className='flex items-center justify-center bg-primary'>
+    <header id='header' className='flex items-center justify-center bg-primary light:bg-dark'>
 
         <div className='flex items-center justify-between'>
             <p className='text-center text-white'>Meddicure</p>

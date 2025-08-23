@@ -18,6 +18,7 @@ function App() {
 
   return (
     <div className="min-h-screen">
+
        <ToastContainer />
 
       {
@@ -27,16 +28,20 @@ function App() {
         
         
         <>
+        <div id="overlay" className={` ${showSidebar ? 'block' : 'hidden'}`}>
+        
+            </div>
           
-         
+         <Header />
           
+
           <div className="flex w-full">
 
             <SideBar/>
-
+            
           
-              <div className={`w-[70%] mx-auto ml-[max(5vw,25px)] my-2  ${!showSidebar ? 'w-[100%]' : 'w-[80%]'}`} >
-                <Header />
+              <div className={`w-[70%] mx-auto ml-[max(5vw,25px)] my-2  ${!showSidebar ? 'w-[100%]' : 'w-[100%]'}`} >
+                
                 <Routes>
                 <Route path='/profile' element={<Profile/>}/>
                 <Route path='/dashboard'  element={<Dashboard/>}/>

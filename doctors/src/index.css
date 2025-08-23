@@ -10,6 +10,9 @@
 @plugin "daisyui"{
   themes: all;
 }
+body{
+  overflow-x: hidden;
+}
 
 .loginPage
 {
@@ -24,6 +27,9 @@
 #sideBar
 {
   font-family: "Poppins",sans-serif;
+  z-index: 1000;
+  transform: translateX(0%); 
+  transition: 0.9s ease-in-out;
 }
 #head
 {
@@ -40,4 +46,17 @@
 #dashboard
 {
   font-family: "Roboto",sans-serif;
+}
+#dashboardStats
+{
+  font-family: "Roboto",sans-serif;
+}
+#overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  z-index: 999; /* Z-index should be lower than the menu */
 }
