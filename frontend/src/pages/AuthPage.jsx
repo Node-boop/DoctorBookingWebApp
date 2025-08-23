@@ -1,7 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState,useEffect } from 'react'
 import axios from 'axios'
 import { ShopContext } from '../context/ShopContext'
 import { toast } from 'react-toastify'
+import {useLocation} from 'react-router-dom'
 const AuthPage = () => {
   const {backendUrl,navigate,token,setToken} = useContext(ShopContext)
   const [currentState,setCurrentState] = useState('Login')
@@ -11,8 +12,13 @@ const AuthPage = () => {
   const [password,setPassword] = useState('')
   const [gender,setGender] = useState('')
   const [loading,setLoading] = useState(false)
+  const [errorMessage,setErrorMessage] = useState('')
 
   const [repeatPassword,setRepeatPassword] = useState('')
+
+  const location = useLocation()
+
+  useEffect(()=>{document.title= "Medicure | Authentication"},[location])
 
   const handleGenderChange = (e)=>{
 
@@ -37,11 +43,12 @@ const AuthPage = () => {
             localStorage.setItem('token',response.data.token)
             toast.success('Login Success')
             const prevUrl = window.history.back()
-            prevUrl !== '/auth0' ? navigate(prevUrl) : navigate('/')/// Redirect to Home or previous page
+            prevUrl !== window.href ? navigate(prevUrl) : navigate('/')/// Redirect to Home or previous page
             setCurrentState('Login') // Reset to Login state after successful login
           }
           else{
             toast.error(response.data.message)
+            setErrorMessage(response.data.message)
             navigate('/auth0')
             setCurrentState('Login')
           }
@@ -62,6 +69,7 @@ const AuthPage = () => {
           else
           {
             toast.error(resp.data.message)
+            setErrorMessage(resp.data.message)
           }
 
           break;
@@ -76,23 +84,25 @@ const AuthPage = () => {
 
     } catch (error) {
       toast.error(error.message)
-      
+      setErrorMessage(error.message)
     }
     finally{
       setLoading(false)
     }
   }
   return (
-    <div className='flex flex-col items-center justify-center justify-self-center mb-15'>
+    <div className='flex flex-col items-center justify-center justify-self-center mb-15 dark:bg-gray-800'>
+       {
+        errorMessage ? <div className="alert alert-error mt-5">
+          <span>{errorMessage}</span>
+      </div> : ''
+       }
        
-       <div className="hidden alert alert-success mt-5">
-          <span>Message sent successfully.</span>
-      </div>
 
       
-      <div className='max-w-[500px] border- px-5 py-3 mt-5 border-gray-300 bg-white shadow mb-10'>
+      <div className='max-w-[500px] border- px-5 py-3 mt-5 border border-gray-300 bg-white mb-10 dark:bg-gray-800 dark:border'>
 
-        <p className='authHeading'>Meddicure Authentication</p>
+        <p className='authHeadin text-center mb-3 dark:text-white'>Meddicure Authentication</p>
 
         {
           currentState === 'Login' ? <div className='flex gap-6 items-center justify-center'>
@@ -123,11 +133,11 @@ const AuthPage = () => {
 
         
         
-        <form onSubmit={onSubmitHandler} className='mt-5'>
+        <form onSubmit={onSubmitHandler} className='mt-5 dark:text-white'>
           {
             currentState === 'Login' ? '' : <div className={`flex flex-col gap-2 mb-3`}>
             
-            <p className='font-serif text-slate-600' >First Name:</p>
+            <p className='font-serif text-slate-600 dark:text-white' >First Name:</p>
             <input onChange={(e)=>setFirstName(e.target.value)} value={firstName} className='px-5 py-2 text-slate-700 font-serif border border-gray-300 rounded-md shadow outline-none' type="text"  placeholder='First Name' required/>
 
           </div>
@@ -136,7 +146,7 @@ const AuthPage = () => {
           {
             currentState === 'Login' ? '' : <div className={`flex flex-col gap-2 mb-3`}>
             
-            <p className='font-serif text-slate-600' >Last Name:</p>
+            <p className='font-serif text-slate-600 dark:text-white' >Last Name:</p>
             <input onChange={(e)=>setLastName(e.target.value)} value={lastName} className='px-5 py-2 text-slate-700 font-serif border border-gray-300 rounded-md shadow outline-none' type="text"  placeholder='Last Name' required/>
 
           </div>
@@ -145,14 +155,14 @@ const AuthPage = () => {
 
            <div className='flex flex-col mb-3'>
             
-            <p className='font-serif text-slate-600' >Email:</p>
+            <p className='font-serif text-slate-600 dark:text-white' >Email:</p>
             <input onChange={(e)=>setEmail(e.target.value)} value={email} className='px-5 py-2 text-slate-700 font-serif border border-gray-300 rounded-md shadow outline-none' type="email" placeholder='example@email.com' required/>
             
           </div>
 
-           <div className='flex flex-col mb-3'>
+           <div className='flex flex-col mb-3 '>
             
-            <p className='font-serif text-slate-600'>Password:</p>
+            <p className='font-serif text-slate-600 dark:text-white'>Password:</p>
             <input onChange={(e)=>setPassword(e.target.value)} value={password} className='px-5 py-2 text-slate-700 font-serif border border-gray-300 rounded-md shadow outline-none' type="password"  placeholder='password' required/>
             
           </div>
@@ -162,7 +172,7 @@ const AuthPage = () => {
 
              <div className={`flex flex-col mb-3 `}>
             
-            <p className='font-serif text-slate-600' >Confirm Password:</p>
+            <p className='font-serif text-slate-600 dark:text-white' >Confirm Password:</p>
             <input onChange={(e)=>setRepeatPassword(e.target.value)} value={repeatPassword} className='px-5 py-2 text-slate-700 font-serif border border-gray-300 rounded-md shadow outline-none' type="password" placeholder='confirm password' required/>
             
           </div>
@@ -174,23 +184,23 @@ const AuthPage = () => {
             currentState === 'Login' ? ' ' : 
 
             <div className="flex flex-col gap-2 mb-3">
-            <p className="font-serif text-sm text-slate-500">Gender</p>
+            <p className="font-serif text-sm text-slate-500 dark:text-white">Gender</p>
 
               <div className="flex gap-6">
                 <div className="flex gap-1">
-                  <p className="text-sm font-serif text-slate-500">Male</p>
+                  <p className="text-sm font-serif text-slate-500 dark:text-white">Male</p>
                    <input type="radio" name="gender" value="male" checked={gender === 'male'} onChange={handleGenderChange} />
                   
                 </div>
 
                 <div className="flex gap-1">
-                  <p className="text-sm font-serif text-slate-500">Female</p>
+                  <p className="text-sm font-serif text-slate-500 dark:text-white">Female</p>
                    <input type="radio" name="gender" value="female" checked={gender === 'female'} onChange={handleGenderChange} />
                   
                 </div>
 
                 <div className="flex gap-1">
-                  <p className="text-sm font-serif text-slate-500">Other</p>
+                  <p className="text-sm font-serif text-slate-500 dark:text-white">Other</p>
                    <input type="radio" name="gender" value="other" checked={gender === 'other'} onChange={handleGenderChange} />
                   
                 </div>

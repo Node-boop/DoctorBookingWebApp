@@ -9,6 +9,7 @@ const Header = () => {
   const logout = ()=>{
     setToken('')
     localStorage.removeItem('token')
+    navigate('/')
   }
   return (
     <div id='head'>

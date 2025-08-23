@@ -16,14 +16,17 @@ import VideoCall from './components/VideoCall'
 import DoctorDetail from "./pages/DoctorDetail";
 
 const App = ()=>{
+
+
+
   return(
-    <div>
+    <div className="dark:bg-gray-800">
       <ToastContainer />
       <Header />
       
 
 
-      <Routes>
+      <Routes className="">
         <Route path='/' element={<Home/>}/>
         <Route path="/booking" element={<Booking />}/>
         <Route path="/ai-chat" element={<Ai />}/>
@@ -39,17 +42,14 @@ const App = ()=>{
     </div>
      
      
-      <div className="fixed w-full bottom-5 lg:hidden">
+      <div className="fixed w-full bottom-0 lg:hidden">
         <MenuBottom />
 
       </div>
 
       
 
-       <div className="fixed w-full bottom-5 lg:hidden">
-        <MenuBottom />
-
-      </div>
+      
        
     </div>
 

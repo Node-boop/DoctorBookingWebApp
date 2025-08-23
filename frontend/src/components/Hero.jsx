@@ -3,7 +3,7 @@ import hero_image from '../assets/banner-doctor.svg'
 
 const Hero = () => {
   return (
-    <div className='flex w-full gap-2 items-center justify-center bg-amber-50 lg:flex  max-sm:flex-col sm:w-full'>
+    <div className='flex w-full gap-2 items-center justify-center bg-amber-50 lg:flex  max-sm:flex-col sm:w-full dark:bg-gray-800'>
 
         <div className='flex flex-col gap-6 bg-amber-200 p-6 shadow-lg rounded-2xl max-sm:absolute max-sm:bg-transparent'>
             <p className='text-3xl font-bold text-slate-400 font-sans'>Where Your Health Is Our priority</p>

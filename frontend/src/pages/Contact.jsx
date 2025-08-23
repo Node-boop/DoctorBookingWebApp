@@ -1,32 +1,31 @@
-import React from 'react'
+import React,{useState} from 'react'
 
 const Contact = () => {
+
+  const [theme,setTheme] = useState('')
+
+
+  const handleThemeChange = (e)=>{
+    setTheme(e.target.value)
+  }
+
+
+  const toggle = (theme)=>{
+    document.documentElement.classList.toggle('dark')
+  }
+
+
   return (
     <div>
-      <button className="btn btn-primary"></button>
+      <label className="flex cursor-pointer gap-2">
+  <span className="label-text">Dark</span>
+  <input type="checkbox" value="" className="toggle theme-controller" onChange = {toggle} />
+  <span className="label-text">Light</span>
+  </label>
 
 
+    <button onClick={toggle} className="btn btn-primary">toggle</button>
 
-  <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-  <legend className="fieldset-legend">Page details</legend>
-
-  <label className="label">Title</label>
-  <input type="text" className="input" placeholder="My awesome page" />
-
-  <label className="label">Slug</label>
-  <input type="text" className="input" placeholder="my-awesome-page" />
-
-  <label className="label">Author</label>
-  <input type="text" className="input" placeholder="Name" />
-</fieldset>
-
-
-
-<div role="tablist" className="tabs tabs-lift">
-  <a role="tab" className="tab">Tab 1</a>
-  <a role="tab" className="tab tab-active">Tab 2</a>
-  <a role="tab" className="tab">Tab 3</a>
-</div>
     </div>
   )
 }

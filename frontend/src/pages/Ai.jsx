@@ -78,15 +78,15 @@ const Ai = () => {
     }
   }
   return (
-    <div className='w-full'>
-      <div className='flex w-full flex-col-reverse items-center mt-10 '>
+    <div className='w-full dark:bg-gray-800'>
+      <div className='flex w-full flex-col-reverse items-center mt-10  '>
 
-        <form onSubmit={onSubmitHandler} className='border border-gray-300 rounded-3xl py-10 px-10 bottom-1'>
+        <form onSubmit={onSubmitHandler} className='border border-gray-300 rounded-3xl py-10 px-10 bottom-1 dark:text-white'>
           <div className='flex gap-5'>
               <input onChange={(e)=>setUserMessage(e.target.value)} value={userMessage} type="text" className='px-5 py-2 w-full outline-none' placeholder='How may i help you today?'/>
               
               
-              <button type='submit' className='border border-gray-300 bg-white px-3 py-2'>send</button>
+              <button type='submit' className='border border-gray-300 bg-white px-3 py-2 dark:bg-slate-900 dark:text-white'>send</button>
           </div>
 
           <div className="flex justify-between mt-4">
@@ -99,7 +99,11 @@ const Ai = () => {
         <div className='mb-10 text-start justify-start'>
 
           {
-            loading ? <p>Just a Second<span className="dots">.....</span></p> : ''
+            loading ? <p>Just a Second
+
+              <span className="loading loading-bars loading-lg ml-2"></span>
+              <span className="loading loading-bars loading-xl"></span>
+            </p> : ''
           }
 
           {

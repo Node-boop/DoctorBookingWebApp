@@ -12,7 +12,7 @@ const Card = ({firtName,lastName,image}) => {
 
     const {navigate} = useContext(ShopContext);
   return (
-    <div className="bg-white shadow-[8px_8px_16px_#bebebe,-8px_-8px_16px_#ffffff] rounded-lg p-4">
+    <div className="bg-white border-2 border-gray-300 rounded-lg p-4 dark:bg-slate-950 dark:text-white">
       <div className="flex flex-col items-center">
        <div className="avatar">
           <div className="ring-normal ring-offset-base-100 w-24 rounded-full ring-2 ring-offset-2">

@@ -17,7 +17,7 @@ const Header = () => {
     
     
   return (
-    <div className='flex mt-3 w-full sticky mx-auto shadow-[8px_8px_16px_#bebebe,-8px_-8px_16px_#ffffff]   rounded-full justify-between px-5 py-5 bg-white lg:justify-between sm:justify-center max-sm:justify-center md:justify-between max-md:justify-between '>
+    <div className='flex  w-full sticky mx-auto  justify-between px-5 py-5 bg-white lg:justify-between sm:justify-center  md:justify-between max-md:justify-between dark:bg-gray-800 dark:border-b dark:text-white'>
 
         <div className='flex'>
             <h1 className='font-extrabold font-mono text-slate-600 text-2xl'>Meddicure</h1>
@@ -53,36 +53,45 @@ const Header = () => {
 
         </div>
         {
-            token ? <div className='flex gap-4 px-6'>
-           <div className='lg:flex sm:hidden max-sm:hidden md:hidden max-md:hidden'>
-                <img src={search_icon} className='w-8 cursor-pointer' alt="" />
-            </div>
+            token ? 
 
-            <div onMouseEnter={()=>setShowAccountMenu(!showAccountMenu)} onMouseLeave={()=>setShowAccountMenu(false)} className='flex items-center justify-center'>
-            <div className='lg:flex sm:hidden max-sm:hidden md:hidden max-md:hidden'>
-                <img src={account_icon} className='w-6 cursor-pointer' alt="" />
+            <div className="flex gap-4">
 
-               
-            </div>
-             <div className={`flex flex-col gap-4 font-serif text-sm px-3 py-3 w-[86px] mr-auto text-center justify-center text-white bg-slate-400 ${showAccountMenu ? 'block absolute top-12' : 'hidden'}`}>
-                    <p className='border-b border-gray-300 py-1 cursor-pointer hover:bg-slate-600'>Profile</p>
-                    <p className='border-b border-gray-300 py-1 cursor-pointer hover:bg-slate-600'>Account</p>
-                    <p className='border-b border-gray-300 py-1 cursor-pointer hover:bg-slate-600'>settings</p>
-                    <p onClick={logout} className='cursor-pointer hover:bg-slate-600 py-1'>logout</p>
+                 <button className="btn btn-ghost btn-circle">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /> </svg>
+                </button>
 
+                <div className="dropdown dropdown-end">
+                  <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                    <div className="w-10 rounded-full">
+                      <img
+                        alt="Tailwind CSS Navbar component"
+                        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                    </div>
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow dark:bg-gray-800">
+                    <li>
+                      <a className="justify-between">
+                        Profile
+                        <span className="badge">New</span>
+                      </a>
+                    </li>
+                    <li><a>Settings</a></li>
+                    <li onClick={logout} ><a>Logout</a></li>
+                  </ul>
                 </div>
-            </div>
-
-            <div>
-
-            </div>
-
-        </div> : <div className='flex gap-4'>
+        </div>
+            
+            : <div className='flex gap-4'>
              <div  className='lg:flex sm:hidden max-sm:hidden md:hidden max-md:hidden'>
-                <img onClick={()=>setShowSearch(!showSearch)} src={search_icon} className='w-8 cursor-pointer' alt="" />
+                 <button className="btn btn-ghost btn-circle">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /> </svg>
+                </button>
             </div>
             <div className='lg:flex sm:hidden max-sm:hidden md:hidden max-md:hidden'>
-                <button onClick={()=>navigate('/auth0')} className='bg-white shadow cursor-pointer px-5 py-1.5 rounded-full font-light font-mono m-0'>Login / Signup</button>
+                <button onClick={()=>navigate('/auth0')} className='bg-white shadow cursor-pointer px-5 py-1.5 rounded-full font-light font-mono m-0 dark:bg-slate-600'>Login / Signup</button>
             </div>
 
             <div>

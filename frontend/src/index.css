@@ -5,8 +5,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&display=swap");
 
 @import 'tailwindcss';
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
-
+@custom-variant dark (&:where(.dark, .dark *));
 @plugin "daisyui"{
   themes:all;
 }
@@ -15,14 +14,17 @@
 *{
   font-family: "Poppins",sans-serif;
 }
- body
- {
-    background-color: #ffff;
- }
-
- #menuBottom
+ 
+ #MenuBottom
  {
   font-family: "Montserrat",sans-serif;
+  line-height: 60px;
+ }
+
+ #menuBottom .dark
+ {
+  box-shadow: none;
+  background-color: gray;
  }
 
  a.active p{
@@ -58,6 +60,23 @@
   50% { border-color: orange }
 }
 
+#sideBar.dark
+{
+  box-shadow: none;
+  border-right: 1px solid gray;
+}
+
+#MenuBottom .active p
+{
+  color: orange;
+}
+#MenuBottom .active i
+{
+  color: orange;
+}
+#MenuBottom .active::before{
+  
+}
 
 
 /* Auth Heading CSS */

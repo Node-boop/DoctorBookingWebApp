@@ -20,7 +20,7 @@ import amref_logo from '../assets/amref.jpeg'
 
 const Home = () => {
   return (
-    <div className='mt-5'>
+    <div className='mt-5 dark:bg-slate-950'>
       <Hero />
 
      
@@ -81,7 +81,7 @@ const Home = () => {
         <p className='text-center font-serif font-semibold mb-5 mt-5 underline'>Top Doctors</p>
 
         <div className='w-full px-3 grid gap-6 grid-cols-2 lg:grid-cols-4 sm:grid-cols-3 max-sm:grid-cols-2 md:grid-cols-3 max-md:grid-cols-3'>
-          <div className='flex flex-col bg-white shadow-[8px_8px_16px_#bebebe,-8px_-8px_16px_#ffffff] py-3 px-3'>
+          <div className='flex flex-col bg-white shadow-[8px_8px_16px_#bebebe,-8px_-8px_16px_#ffffff] py-3 px-3 dark:bg-slate-950 dark:shaow-xs'>
             <picture>
               <img src={doc1} className='w-full rounded-full' alt="" />
             </picture>
@@ -151,7 +151,7 @@ const Home = () => {
 
     </div>
 
-    <div className='flex flex-col items-center justify-center mt-4 border-t border-gray-300'>
+    <div className='hidden flex flex-col items-center justify-center mt-4 border-t border-gray-300'>
     <p className='text-slate-500 font-serif text-xl text-center mt-4 mb-4'>Our Partners</p>
       <div className='w-full px-15 gap-6 items-center justify-center grid grid-cols-2 lg:grid-cols-5 sm:grid-cols-3 max-sm:grid-cols-2 md:grid-cols-3 max-md:grid-cols-4'>
       

@@ -7,42 +7,42 @@ import booking_icon from '../assets/grid.svg'
 const MenuBottom = () => {
   return (
     <div>
-       <div id="MenuBottom" className='w-full bg-[#fff] shadow-[8px_8px_16px_#bebebe,-8px_-8px_16px_#ffffff] rounded-full px-5 py-2'>
+       <div id="MenuBottom" className='w-full bg-[#fff] h-[80px] rounded-lg px-5 py-5 dark:text-white dark:bg-gray-800'>
         <div className='flex justify-between'>
 
            
 
-            <NavLink className={'flex flex-col items-center'} to={'ai-chat'}>
-                 <img src={ai_icon} className='w-6' alt="" />
-                <p className='font-semibold text-gray-400 text-sm '>AiDoctor</p>
+            <NavLink className={'flex flex-col gap-4 items-center'} to={'/ai-chat'}>
+                <i  className='fa fa-bolt w-6' alt="" ></i>
+                <p className=' text-gray-400 text-sm '>AiDoctor</p>
+
+            </NavLink>
+
+              <NavLink className={'flex flex-col gap-4 items-center'} to={'/booking'}>
+                 <i  className='fa fa-grip-horizontal w-6' alt="" ></i>
+                <p className='text-gray-400 text-sm '>booking</p>
                 
 
             </NavLink>
 
-              <NavLink className={'flex flex-col items-center'} to={'/booking'}>
-                 <img src={booking_icon} className='w-6' alt="" />
-                <p className='font-semibold text-gray-400 text-sm '>booking</p>
-                
-
-            </NavLink>
-
-                 <NavLink className={'flex flex-col'} to={'/'}>
-                <p className='font-semibold text-gray-400 text-sm '>home</p>
+                <NavLink className={'flex flex-col gap-4 items-center'} to={'/'}>
+                     <i  className='fa fa-home w-6' alt="" ></i>
+                <p className=' text-gray-400 text-sm '>home</p>
 
 
-            </NavLink>
+                </NavLink>
               
 
-             <NavLink className={'flex flex-col items-center'}>
+             <NavLink to={"/profile"} className={'flex flex-col gap-4 items-center'}>
 
-                <img src={account_icon} className='w-6' alt="" />
-                <p className='font-semibold text-gray-400 text-sm '>account</p>
+                <i  className='fa fa-user-circle w-6' alt="" ></i>
+                <p className=' text-gray-400 text-sm '>account</p>
                 
             </NavLink>
 
-             <NavLink className={'flex flex-col items-center'}>
-                 <img src={more_icon} className='w-6' alt="" />
-                <p className='font-semibold text-gray-400 text-sm '>more</p>
+             <NavLink to={'/more'} className={'flex flex-col gap-4 items-center'}>
+                 <i className='fa fa-ellipsis-h w-6' alt="" ></i>
+                <p className=' text-gray-400 text-sm '>more</p>
                 
 
             </NavLink>
