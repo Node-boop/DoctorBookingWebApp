@@ -1,12 +1,28 @@
-import React, { useContext,useState } from 'react'
+import React, { useContext,useEffect,useState } from 'react'
 import Search from '../components/Search'
 import Card from '../components/Card'
 import { ShopContext } from '../context/ShopContext'
 import axios from 'axios'
 
 const Booking = () => {
-  const {showSearch,setShowSearch,backendUrl,doctors} = useContext(ShopContext)
+  const {showSearch,setShowSearch,backendUrl,doctors,setDoctors,searchQuery,setSearchQuery} = useContext(ShopContext)
+  const [filteredDoctors,setFilteredDoctors] = useState([])
+  const [search,setSearch] = useState('')
+  
 
+  const searchDoctor = ()=>{
+    let doctorsCopy = doctors.slice()
+
+    doctorsCopy = doctorsCopy.filter((doctor)=> doctor.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || doctor.lastName.toLowerCase().includes(searchQuery.toLowerCase()))
+
+    //setDoctors(doctorsCopy)
+    setFilteredDoctors(doctorsCopy)
+  }
+
+  useEffect(()=>{
+    searchDoctor()
+  },[searchQuery])
+ 
 
   return (
     <div className='flex justify-between mt-4 dark:bg-gray-800' id='booking'>
@@ -25,7 +41,7 @@ const Booking = () => {
           
         </div>
 
-        <div className='grid grid-cols-2 gap-3 mt-4 lg:grid-cols-6 md:grid-cols-1 sm:grid-cols-2 max-sm:grid-cols-2 dark:bg-gray-800'>
+        <div className='grid grid-cols-2 gap-3 mt-4 lg:grid-cols-7 md:grid-cols-1 sm:grid-cols-2 max-sm:grid-cols-2 dark:bg-gray-800'>
           
           {
             doctors.map((doctor,index)=>(

@@ -14,6 +14,7 @@ import MenuBottom from "./components/MenuBottom";
 import Profile from "./pages/Profile";
 import VideoCall from './components/VideoCall'
 import DoctorDetail from "./pages/DoctorDetail";
+import Pharmacy from "./pages/Pharmacy";
 
 const App = ()=>{
 
@@ -36,6 +37,7 @@ const App = ()=>{
         <Route path="/create-profile" element={<Profile />}/>
         <Route path="/video-call" element={<VideoCall />}/>
         <Route path="/doctor-detail" element={<DoctorDetail />}/>
+        <Route path="/pharmacy" element={<Pharmacy />}/>
       </Routes>
     <div className="mt-5">
       

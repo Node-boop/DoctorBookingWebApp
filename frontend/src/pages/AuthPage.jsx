@@ -91,7 +91,7 @@ const AuthPage = () => {
     }
   }
   return (
-    <div className='flex flex-col items-center justify-center justify-self-center mb-15 dark:bg-gray-800'>
+    <div className='flex flex-col items-center justify-center justify-self-center mb-15 min-h-screen dark:bg-gray-800'>
        {
         errorMessage ? <div className="alert alert-error mt-5">
           <span>{errorMessage}</span>

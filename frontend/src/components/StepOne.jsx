@@ -15,54 +15,57 @@ const StepOne = ({ nextStep, handleChange, values }) => {
       <div className='flex gap-8 mt-3'>
       <div className='flex flex-col gap-1'>
           <label htmlFor="title">Mr.</label>
-          <input type="radio" name="title" id="" />
+          <input type="radio" name="title" id="" required/>
       </div>
       
        <div className='flex flex-col gap-1'>
           <label htmlFor="title">Mrs.</label>
-          <input type="radio" name="title" id="" />
+          <input type="radio" name="title" id="" required/>
       </div>
 
        <div className='flex flex-col gap-1'>
           <label htmlFor="title">Miss.</label>
-          <input type="radio" name="title" id="" />
+          <input type="radio" name="title" id="" required/>
       </div>
       </div>
 
       <div className='flex flex-col gap-3 mt-3'>
         <label htmlFor="phone">Phone:</label>
 
-        <input type="tel" name="phone" id="" className='border-b border-gray-300 outline-none' placeholder='eg.25471234567' required/>
+        <input type="tel" className="input validator tabular-nums" required placeholder="Phone" 
+        pattern="[0-9]*" minlength="10" maxlength="10" title="Must be 10 digits" />
       </div>
 
       <div className='flex flex-col gap-3 mt-3'>
 
         <label htmlFor="DOB">Date Of Birth:</label>
 
-        <input type="date" name="DOB" id="dateOfBirth" defaultValue={new Date} className='border-b-1 border-gray-300 outline-none' required placeholder='Date of Birth'/>
+        <input type="date" className="input validator" required placeholder="Pick a date in 2025" 
+        min="1970-01-01" max="2025-01-01"
+          title="Must be valid URL" />
+       
 
       </div>
 
-      <div className='flex flex-col gap-4 mt-4'>
+      <div className='hidden  flex-col gap-4 mt-4'>
 
         <label htmlFor="natinality">Natinality:</label>
 
-        <select name="country" id="" className='border-b-2 border-gray-300 outline-none' required>
-          <option value="">Nationality</option>
-          <option value="Algeria">Algeria</option>
-          <option value="Angola">Angola</option>
-          <option value="Congo">Congo</option>
-          <option value="Ghana">Ghana</option>
-          <option value="Kenya">Kenya</option>
-        </select>
+        <select defaultValue="Pick a font" className="select select-ghost border">
+        <option disabled={true}>Pick a country</option>
+        <option>Inter</option>
+        <option>Poppins</option>
+        <option>Raleway</option>
+      </select>
 
       </div>
 
       <div className='flex flex-col gap-4 mt-4' >
 
-        <label htmlFor="ID">ID / Passport:</label>
+        <label htmlFor="ID">ID No:</label>
 
-        <input type="text" name="ID" id="" className='border-b-2 border-gray-400 outline-none' placeholder='ID or Passport Number' required/>
+      <input type="tel" className="input validator tabular-nums" required placeholder="ID Number" 
+        pattern="[0-9]*" minLength="7" maxLength="8" title="Must be 8 digits" />
 
 
       </div>

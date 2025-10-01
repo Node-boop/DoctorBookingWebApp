@@ -5,7 +5,7 @@ import { ShopContext } from '../context/ShopContext';
 const Search = () => {
   const { handleSearch,searchQuery,setSearchQuery ,showSearch,setShowSearch} = useContext(ShopContext);
   return (
-    <form onSubmit={(e) => handleSearch(searchQuery, e)} className={`flex items-center justify-center border border-gray-300 rounded-lg max-sm:w-[80%] ${showSearch ? 'block' : 'hidden'}`}>
+    <form onSubmit={handleSearch} className={`flex items-center justify-center border border-gray-300 rounded-lg max-sm:w-[80%] ${showSearch ? 'block' : 'hidden'}`}>
       <input
         type="text"
         value={searchQuery}

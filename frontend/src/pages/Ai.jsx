@@ -78,7 +78,7 @@ const Ai = () => {
     }
   }
   return (
-    <div className='w-full dark:bg-gray-800'>
+    <div className='w-full min-h-screen bottom-0 dark:bg-gray-800'>
       <div className='flex w-full flex-col-reverse items-center mt-10  '>
 
         <form onSubmit={onSubmitHandler} className='border border-gray-300 rounded-3xl py-10 px-10 bottom-1 dark:text-white'>
@@ -99,7 +99,7 @@ const Ai = () => {
         <div className='mb-10 text-start justify-start'>
 
           {
-            loading ? <p>Just a Second
+            loading ? <p className='dark:text-white'>Just a Second
 
               <span className="loading loading-bars loading-lg ml-2"></span>
               <span className="loading loading-bars loading-xl"></span>
@@ -107,7 +107,7 @@ const Ai = () => {
           }
 
           {
-            aiResponse || errorMessage ? <div className="text-sm text-center justify-center text-slate-700 flex-wrap break-normal"><p >{aiResponse}</p><p className="break-normal flex-wrap">{errorMessage}</p></div> : <p className={`${loading ? 'hidden' : 'block text-sky-600 font-bold text-xl'}`}>Hello {user.firstName}</p>
+            aiResponse || errorMessage ? <div className="text-sm text-center justify-start text-slate-700 flex-wrap break-normal"><p className={`${loading ? 'hidden' : ''}`}>{aiResponse}</p><p className={`break-normal flex-wrap ${loading ? 'hidden' : ''}`}>{errorMessage}</p></div> : <p className={`${loading ? 'hidden' : 'block text-sky-600 font-bold text-xl'}`}>Hello {user.firstName}</p>
           }
 
 

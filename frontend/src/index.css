@@ -53,6 +53,11 @@
   to { width: 100% }
 }
 
+#stepTwo
+{
+  font-family:"Montserrat",sans-serif;
+}
+
 
 /* Blinking cursor animation */
 @keyframes blink-caret {

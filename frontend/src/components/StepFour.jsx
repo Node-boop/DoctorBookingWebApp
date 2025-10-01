@@ -1,17 +1,6 @@
-// StepTwo.js
-import React from "react";
+import React from 'react'
 
-const StepTwo = ({ nextStep, prevStep, handleChange, values }) => {
-  const continueStep = (e) => {
-    e.preventDefault();
-    nextStep();
-  };
-
-  const goBack = (e) => {
-    e.preventDefault();
-    prevStep();
-  };
-
+const StepFour = () => {
   return (
     <form onSubmit={continueStep} className="space-y-4" id="stepTwo">
       <fieldset className="border-1 border-gray-400 px-5 py-5">
@@ -100,7 +89,7 @@ const StepTwo = ({ nextStep, prevStep, handleChange, values }) => {
         </div>
       </fieldset>
     </form>
-  );
-};
+  )
+}
 
-export default StepTwo;
+export default StepFour

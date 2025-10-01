@@ -19,6 +19,7 @@ const ShopContextProvider = (props)=>{
      const [verified,setVerified]= useState(false)
      const [showSearch,setShowSearch] = useState(true)
      const backendUrl = 'http://localhost:5500'
+     
 
     //const [doctors,setDoctors] = useState([])
     const [loading,setLoading] = useState(false)
@@ -82,12 +83,12 @@ const ShopContextProvider = (props)=>{
     
 
 
-    const handleSearch = async (searchQuery,e) => {
+    const handleSearch = async (e) => {
         try {
             e.preventDefault();
             setSearchLoading(true);
-            const response = await fetch(`${backendUrl}/api/doctors/search?query=${searchQuery}`, {
-                method: 'POST',
+            const response = await axios.post(`${backendUrl}/api/doctors/search?query=${searchQuery}`, {
+             
                 headers: {
                     'Content-Type': 'application/json',
                     
@@ -99,8 +100,9 @@ const ShopContextProvider = (props)=>{
                 toast.error(response.data.message);
             }
 
-            const data = await response.data.doctors;
+            const data = await response.data.results;
             setSearchResults(data);
+            setDoctors(data)
 
         }
         catch (error) {
@@ -160,7 +162,7 @@ const ShopContextProvider = (props)=>{
     */
     const value = {
         token,navigate,backendUrl,setToken,showAccountMenu,setShowAccountMenu,handleSearch,searchQuery,setSearchQuery,searchResults,setSearchResults,searchLoading,setSearchLoading
-        ,doctors,setDoctors,fetchDoctors,showHeader,setShowHeader,showSearch,setShowSearch
+        ,doctors,setDoctors,fetchDoctors,showHeader,setShowHeader,showSearch,setShowSearch,searchQuery,setSearchQuery
     }
 
     return(

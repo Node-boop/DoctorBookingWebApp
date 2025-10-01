@@ -14,8 +14,10 @@ import nodemailer from 'nodemailer'
 import doctorSchedule from "../models/doctor-schedules.mjs";
 import booking from '../models/booking.mjs'
 import '../strategies/google-Oath20-strategy.mjs'
+import '../strategies/local-strategy.mjs'
 import passport from "passport";
 import Review from "../models/reviews.mjs";
+import session from "express-session";
 const router = Router()
 
 
@@ -192,6 +194,12 @@ router.post('/api/users/auth',checkSchema(loginValidator),async(request,response
         {
             return response.json({success:false,message:"Invalid username or password"})
         }
+        //ATTACHING USER TO THE SESSION
+
+        request.session.user = {
+            id:user._id,
+            role:user.role
+        }
 
         // CREATING PAYLOAD OBJECT TO GENERATE JWT BEARER TOKEN
 
@@ -213,6 +221,17 @@ router.post('/api/users/auth',checkSchema(loginValidator),async(request,response
     }
 })
 
+// local passport authentication
+
+router.post('/api/auth/local',passport.authenticate('local'),async(request,response)=>{
+    response.json({succes:true,message:"login success"})
+})
+
+router.get('/api/auth/status',async(request,response)=>{
+    console.log(request.session.id)
+    console.log(request.session)
+    response.json({succes:true,message:'Logged in'})
+})
 
 // google-Oauth20 authentication routes
 

@@ -16,7 +16,7 @@ const Contact = () => {
 
 
   return (
-    <div>
+    <div className='w-full min-h-screen dark:text-white'>
       <label className="flex cursor-pointer gap-2">
   <span className="label-text">Dark</span>
   <input type="checkbox" value="" className="toggle theme-controller" onChange = {toggle} />

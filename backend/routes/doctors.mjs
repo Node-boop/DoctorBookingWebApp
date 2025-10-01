@@ -379,8 +379,9 @@ router.post('/api/user/doctor/profile',doctorMiddleware,upload.fields([{name:'im
 router.post('/api/doctors/search',async(request,response)=>{
    try {
     const query = request.query.query
+    console.log(query)
     // query and match multiple fileds of the search
-    const queryResult = Doctor.find({
+    const queryResult = Doctor.findOne({
         $or:[
             {firstName:{$regex: query, $options:'i'}},
             {lastName: {$regex: query, $options: 'i'}}

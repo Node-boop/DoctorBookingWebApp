@@ -13,6 +13,7 @@ import swaggerUi from 'swagger-ui-express'
 import session from 'express-session'
 import http from 'http'
 import BodyParser from 'body-parser'
+import MongoStore from 'connect-mongo'
 
 
 
@@ -32,10 +33,18 @@ app.use(express.json())
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Set to true if using HTTPS
+    saveUninitialized: false,
+    cookie: {
+        maxAge:360000
+    }, // Set to true if using HTTPS
+    store:MongoStore.create({
+        client:mongoose.connection.getClient()
+    })
+    
    
 }))
+passport.initialize()
+app.use(passport.session())
 
 app.use(routes)
 
